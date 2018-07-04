@@ -24,14 +24,32 @@ public class Player : MonoBehaviour {
     [SerializeField]
     private int lifes = 3;
 
+    private Spawn_Manager spawn_Manager;
+
+    private UIManager uiManager;
+    private GameManager gameManager;
+
     private float speedBoost = 1.0f;
     private float canFire = 0.0f;
     
     // Use this for initialization
 	void Start ()
     {
-		
-	}
+        uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+
+        if (uiManager)
+        {
+            uiManager.UpdateLives(lifes);
+        }
+
+        spawn_Manager = GameObject.Find("Spawn_Manager").GetComponent<Spawn_Manager>();
+
+        if (spawn_Manager)
+        {
+            spawn_Manager.StartSpawnRoutines();
+        }
+    }
 	
 	// Update is called once per frame
 	void Update ()
@@ -58,7 +76,6 @@ public class Player : MonoBehaviour {
                 else
                     Instantiate(laserPrefab, transform.position + new Vector3(0, 0.88f, 0), Quaternion.identity);
 
-                Debug.Log("xy");
                 canFire = Time.time + fireRate;
             }
         }
@@ -97,10 +114,14 @@ public class Player : MonoBehaviour {
         {
             this.lifes--;
 
+            uiManager.UpdateLives(lifes);
+
             if (lifes <= 0)
             {
                 Instantiate(explosionAnimation, transform.position, Quaternion.identity);
                 Destroy(this.gameObject);
+                gameManager.GameOver();
+                uiManager.ShowTitleScreen();
             }
         }
         else
