@@ -8,6 +8,8 @@ public class PowerUp : MonoBehaviour {
     private float speed = 5.0f;
     [SerializeField]
     private int powerupID;
+    [SerializeField]
+    private AudioClip clip;
     
     // Use this for initialization
 	void Start ()
@@ -46,6 +48,7 @@ public class PowerUp : MonoBehaviour {
                 {
                     player.TurnShieldOn();
                 }
+                AudioSource.PlayClipAtPoint(clip, Camera.main.transform.position);
             }
 
             Destroy(this.gameObject);

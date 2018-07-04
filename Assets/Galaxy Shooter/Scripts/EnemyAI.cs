@@ -11,6 +11,8 @@ public class EnemyAI : MonoBehaviour {
     [SerializeField]
     private float speed = 5.0f;
     private UIManager uiManager;
+    [SerializeField]
+    private AudioClip clip;
 
     // Use this for initialization
     void Start ()
@@ -37,6 +39,7 @@ public class EnemyAI : MonoBehaviour {
     {
         GameObject Anim = Instantiate(prefab, transform.position, Quaternion.identity);
         Destroy(Anim, 3f);
+        AudioSource.PlayClipAtPoint(clip, Camera.main.transform.position);
     }
 
     private void OnTriggerEnter2D(Collider2D other)

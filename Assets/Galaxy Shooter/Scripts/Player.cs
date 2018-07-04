@@ -31,6 +31,11 @@ public class Player : MonoBehaviour {
 
     private float speedBoost = 1.0f;
     private float canFire = 0.0f;
+
+    private AudioSource audioSource;
+
+    [SerializeField]
+    private GameObject[] engines;
     
     // Use this for initialization
 	void Start ()
@@ -49,6 +54,8 @@ public class Player : MonoBehaviour {
         {
             spawn_Manager.StartSpawnRoutines();
         }
+
+        audioSource = GetComponent<AudioSource>();
     }
 	
 	// Update is called once per frame
@@ -69,6 +76,7 @@ public class Player : MonoBehaviour {
     {
         if (Input.GetKey(KeyCode.Space))
         {
+            audioSource.Play();
             if (Time.time > canFire)
             {
                 if(canTriple)
@@ -113,6 +121,17 @@ public class Player : MonoBehaviour {
         if(!shieldOn)
         {
             this.lifes--;
+
+            switch(lifes)
+            {
+                case 1:
+                    engines[0].SetActive(true);
+                    break;
+
+                case 2:
+                    engines[1].SetActive(true);
+                    break;
+            }
 
             uiManager.UpdateLives(lifes);
 
