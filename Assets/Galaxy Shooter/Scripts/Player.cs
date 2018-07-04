@@ -5,15 +5,26 @@ using UnityEngine;
 public class Player : MonoBehaviour {
 
     public bool canTriple = false;
+    public bool shieldOn = false;
+
+    [SerializeField]
+    private GameObject explosionAnimation;
 
     [SerializeField]
     private GameObject laserPrefab;
+
+    [SerializeField]
+    private GameObject shield;
 
     [SerializeField]
     private float speed = 5.0f;
     [SerializeField]
     private float fireRate = 0.25f;
 
+    [SerializeField]
+    private int lifes = 3;
+
+    private float speedBoost = 1.0f;
     private float canFire = 0.0f;
     
     // Use this for initialization
@@ -58,8 +69,8 @@ public class Player : MonoBehaviour {
         float horizontalInput = Input.GetAxis("Horizontal");
         float verticalInput = Input.GetAxis("Vertical");
 
-        transform.Translate(Vector3.right * horizontalInput * speed * Time.deltaTime);
-        transform.Translate(Vector3.up * verticalInput * speed * Time.deltaTime);
+        transform.Translate(Vector3.right * horizontalInput * speed * speedBoost * Time.deltaTime);
+        transform.Translate(Vector3.up * verticalInput * speed * speedBoost * Time.deltaTime);
 
         if (transform.position.y > 0)
         {
@@ -78,6 +89,43 @@ public class Player : MonoBehaviour {
         {
             transform.position = new Vector3(9.2f, transform.position.y, 0);
         }
+    }
+
+    public void OneLifeDown()
+    {
+        if(!shieldOn)
+        {
+            this.lifes--;
+
+            if (lifes <= 0)
+            {
+                Instantiate(explosionAnimation, transform.position, Quaternion.identity);
+                Destroy(this.gameObject);
+            }
+        }
+        else
+        {
+            shieldOn = false;
+            shield.gameObject.SetActive(false);
+        }
+    }
+
+    public void TurnShieldOn()
+    {
+        this.shieldOn = true;
+        shield.gameObject.SetActive(true);
+    }
+
+    public void SpeedBoostPowerUpOn()
+    {
+        speedBoost = 2.0f;
+        StartCoroutine(SpeedBoostPowerDownRoutine());
+    }
+
+    public IEnumerator SpeedBoostPowerDownRoutine()
+    {
+        yield return new WaitForSeconds(5.0f);
+        speedBoost = 1.0f;
     }
 
     public void TripleShotPowerUpOn()
