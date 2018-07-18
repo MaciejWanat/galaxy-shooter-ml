@@ -9,7 +9,7 @@ public class EnemyAI : MonoBehaviour {
     [SerializeField]
     private GameObject explosionPrefab;
     [SerializeField]
-    private float speed = 5.0f;
+    private float speed = 10.0f;
     private UIManager uiManager;
     [SerializeField]
     private AudioClip clip;
