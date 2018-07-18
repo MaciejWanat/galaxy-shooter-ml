@@ -8,6 +8,7 @@ public class UIManager : MonoBehaviour {
     public Sprite[] lives;
     public Image livesImageDisplay;
     public Text scoreText;
+    public Text difficultyText;
     public int score;
     public GameObject titleScreen;
 
@@ -32,5 +33,10 @@ public class UIManager : MonoBehaviour {
         score++;
         scoreText.text = "Score: " + score;
     }
-    
+
+    public void UpdateDifficulty(float difficulty)
+    {
+        difficultyText.text = "Difficulty: " + difficulty.ToString();
+    }
+
 }
