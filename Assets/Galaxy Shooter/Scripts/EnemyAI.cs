@@ -13,6 +13,7 @@ public class EnemyAI : MonoBehaviour {
     private UIManager uiManager;
     [SerializeField]
     private AudioClip clip;
+    public bool collideWithPlayer = false;
 
     // Use this for initialization
     void Start ()
@@ -55,13 +56,15 @@ public class EnemyAI : MonoBehaviour {
         if (other.tag == "Player")
         {
             Player player = other.GetComponent<Player>();
+            collideWithPlayer = true;
 
             if (player != null)
             {
                 player.OneLifeDown();
             }
 
-            Destroy(this.gameObject);
+            //Disable destroy for testing
+            //Destroy(this.gameObject);
             Explode(explosionPrefab);
         }
     }

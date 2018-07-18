@@ -47,14 +47,14 @@ public class Player : MonoBehaviour {
         {
             uiManager.UpdateLives(lifes);
         }
-
+        /*
         spawn_Manager = GameObject.Find("Spawn_Manager").GetComponent<Spawn_Manager>();
 
         if (spawn_Manager)
         {
             spawn_Manager.StartSpawnRoutines();
         }
-
+        */
         audioSource = GetComponent<AudioSource>();
     }
 	
@@ -120,7 +120,8 @@ public class Player : MonoBehaviour {
     {
         if(!shieldOn)
         {
-            this.lifes--;
+            //Lets get immortal
+            //this.lifes--;
 
             switch(lifes)
             {
@@ -134,7 +135,7 @@ public class Player : MonoBehaviour {
             }
 
             uiManager.UpdateLives(lifes);
-
+            
             if (lifes <= 0)
             {
                 Instantiate(explosionAnimation, transform.position, Quaternion.identity);

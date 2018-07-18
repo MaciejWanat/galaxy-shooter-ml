@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour {
 
-    public bool gameOver = true;
+    //gameOver always false
+    public bool gameOver = false;
     public GameObject player;
 
     private UIManager uiManager;
@@ -15,12 +16,15 @@ public class GameManager : MonoBehaviour {
     {
         uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
         spawn_manager = GameObject.Find("Spawn_Manager").GetComponent<Spawn_Manager>();
+        //hide screen auto
+        uiManager.HideTitleScreen();
     }
 	
 	// Update is called once per frame
 	void Update ()
     {
-		if(gameOver)
+        /*
+        if (gameOver)
         {
             if(Input.GetKeyDown(KeyCode.Space))
             {
@@ -29,8 +33,8 @@ public class GameManager : MonoBehaviour {
                 gameOver = false;
                 uiManager.HideTitleScreen();
             }
-        }
-	}
+        } */  
+    }
 
     public void GameOver()
     {

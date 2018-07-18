@@ -34,3 +34,7 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
+
+Assets/ML-Agents/Plugins/iOS/
+Assets/ML-Agents/Plugins/Android/
+Assets/ML-Agents/Plugins/Computer/

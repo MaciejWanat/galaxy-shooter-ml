@@ -16,8 +16,6 @@ public class Spawn_Manager : MonoBehaviour {
     private float DifficultyUpInterval = 5.0f;
     [SerializeField]
     private float DifficultyRaiseTempo = 1.0f;
-    [SerializeField]
-    private float EnemySpeedBoost = 0.5f;
     private float EnemySpawnInterval = 5.0f;
     private int Difficulty = 0;
     
@@ -26,7 +24,8 @@ public class Spawn_Manager : MonoBehaviour {
     {
         uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
-        Difficulty -= 1;
+        //override
+        gameManager.gameOver = false;
         StartSpawnRoutines();
     }
 
@@ -39,7 +38,7 @@ public class Spawn_Manager : MonoBehaviour {
 
     IEnumerator EnemySpawnRoutine()
     {
-        while(gameManager.gameOver == false)
+        while (gameManager.gameOver == false)
         {
             Instantiate(enemyShipPrefab, new Vector3(Random.Range(-7f, 7f), 7, 0), Quaternion.identity);
             yield return new WaitForSeconds(EnemySpawnInterval);
