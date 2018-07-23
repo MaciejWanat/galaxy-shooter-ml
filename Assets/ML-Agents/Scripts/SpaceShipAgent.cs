@@ -70,7 +70,7 @@ public class SpaceShipAgent : Agent
             //Collided
             if (CheckCollision(Target))
             {
-                AddReward(-1.0f);
+                AddReward(-5.0f);
                 Done();
             }
             else
@@ -89,7 +89,7 @@ public class SpaceShipAgent : Agent
                 }
                 */
                 //Getting further
-                if (distanceToTarget > previousDistance)
+                if (distanceToTarget > (previousDistance + 0.1f))
                 {
                     //Debug.Log(distanceToTarget + " > " + (previousDistance + 0.1).ToString());
                     AddReward(0.1f);
