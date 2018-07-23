@@ -122,11 +122,11 @@ Prefab:
     m_Modifications:
     - target: {fileID: 4785774200031750, guid: 60037dfe2173e27448d8c91b32c4276c, type: 2}
       propertyPath: m_LocalPosition.x
-      value: 93.94
+      value: 0.05
       objectReference: {fileID: 0}
     - target: {fileID: 4785774200031750, guid: 60037dfe2173e27448d8c91b32c4276c, type: 2}
       propertyPath: m_LocalPosition.y
-      value: -2.18
+      value: -2.24
       objectReference: {fileID: 0}
     - target: {fileID: 4785774200031750, guid: 60037dfe2173e27448d8c91b32c4276c, type: 2}
       propertyPath: m_LocalPosition.z
@@ -151,6 +151,11 @@ Prefab:
     - target: {fileID: 4785774200031750, guid: 60037dfe2173e27448d8c91b32c4276c, type: 2}
       propertyPath: m_RootOrder
       value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 114088896644062758, guid: 60037dfe2173e27448d8c91b32c4276c,
+        type: 2}
+      propertyPath: fireRate
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 60037dfe2173e27448d8c91b32c4276c, type: 2}
@@ -280,7 +285,7 @@ MonoBehaviour:
   trainingConfiguration:
     width: 80
     height: 80
-    qualityLevel: 1
+    qualityLevel: 0
     timeScale: 100
     targetFrameRate: -1
   inferenceConfiguration:
@@ -882,7 +887,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   brainParameters:
-    vectorObservationSize: 10
+    vectorObservationSize: 500
     numStackedVectorObservations: 1
     vectorActionSize: 2
     cameraResolutions: []
@@ -891,7 +896,7 @@ MonoBehaviour:
     - 
     vectorActionSpaceType: 1
     vectorObservationSpaceType: 1
-  brainType: 2
+  brainType: 0
   CoreBrains:
   - {fileID: 242011876}
   - {fileID: 1869799302}
@@ -1107,7 +1112,7 @@ MonoBehaviour:
   - {fileID: 1277582078813232, guid: 0f2f5a16b97fbe043a1bd1ab2d8cfb1e, type: 2}
   - {fileID: 1801930796163484, guid: 956c94c93b4f31743920fb07ff9ff2a7, type: 2}
   DifficultyUpInterval: 5
-  DifficultyRaiseTempo: 1
+  DifficultyRaiseTempo: 1.2
 --- !u!4 &1722448448
 Transform:
   m_ObjectHideFlags: 0
@@ -1146,7 +1151,7 @@ MonoBehaviour:
   m_Name: (Clone)(Clone)(Clone)(Clone)
   m_EditorClassIdentifier: 
   broadcast: 1
-  graphModel: {fileID: 4900000, guid: 6eff66f98cc7e6640921d77fea5fcca7, type: 3}
+  graphModel: {fileID: 4900000, guid: 2e75a50f7f3826b4991a372d58806f94, type: 3}
   graphScope: 
   graphPlaceholders: []
   BatchSizePlaceholderName: batch_size

@@ -106,15 +106,15 @@ public class Player : MonoBehaviour {
             transform.position = new Vector3(transform.position.x, -4.2f, 0);
         }
 
-        if (transform.position.x > 3f)
+        if (transform.position.x > 7f)
         {
-            transform.position = new Vector3(3f, transform.position.y, 0);
+            transform.position = new Vector3(7f, transform.position.y, 0);
             // "scrolling"
             //transform.position = new Vector3(-9.2f, transform.position.y, 0);
         }
-        else if (transform.position.x < -3f)
+        else if (transform.position.x < -7f)
         {
-            transform.position = new Vector3(-3f, transform.position.y, 0);
+            transform.position = new Vector3(-7f, transform.position.y, 0);
             // "scrolling"
             //transform.position = new Vector3(9.2f, transform.position.y, 0);
         }
