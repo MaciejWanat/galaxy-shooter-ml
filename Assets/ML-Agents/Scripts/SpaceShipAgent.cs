@@ -47,7 +47,7 @@ public class SpaceShipAgent : Agent
         if (Target)
             Destroy(Target);
 
-        this.transform.position = Vector3.zero;
+        this.transform.position = new Vector3(0, 0, 0);
         this.rBody.velocity = Vector2.zero;
         this.rBody.angularVelocity = 0;
     }
@@ -73,7 +73,7 @@ public class SpaceShipAgent : Agent
                 //Getting further
                 if (distanceToTarget > previousDistance)
                 {
-                    AddReward(0.1f);
+                    AddReward(0.2f);
                 }
                 previousDistance = distanceToTarget;
             }
@@ -85,8 +85,11 @@ public class SpaceShipAgent : Agent
 
         Vector3 controlSignal = Vector3.zero;
         controlSignal.x = vectorAction[0];
-        controlSignal.z = vectorAction[1];
-        rBody.AddForce(controlSignal * speed);
+        controlSignal.y = vectorAction[1];
+
+        transform.Translate(Vector3.right * controlSignal.x * speed * Time.deltaTime);
+        transform.Translate(Vector3.up * controlSignal.y * speed * Time.deltaTime);
+        //rBody.AddForce(controlSignal * speed);
     }
 
     private bool CheckCollision(GameObject target)
@@ -95,20 +98,6 @@ public class SpaceShipAgent : Agent
         var contactFiler = new ContactFilter2D { useTriggers = true };
 
         return thisCollider.IsTouching(target.GetComponent<Collider2D>(), contactFiler);
-    }
-
-    private bool CheckCollisionDistance(GameObject target)
-    {
-        var relativePosition = Target.transform.position - gameObject.transform.position;
-
-        relativePosition.x = Mathf.Abs(relativePosition.x);
-        relativePosition.y = Mathf.Abs(relativePosition.y);
-
-        if (relativePosition.x < 1 && relativePosition.y < 2)
-        {
-            return true;
-        }
-        return false;
     }
 
     private GameObject GetEnemy()

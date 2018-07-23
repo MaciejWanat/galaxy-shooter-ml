@@ -62,7 +62,7 @@ public class Player : MonoBehaviour {
 	void Update ()
     {
         Movement();
-        ShottiyShoot();
+        ShottityShoot();
     }
 
     void TripleShoot()
@@ -72,7 +72,7 @@ public class Player : MonoBehaviour {
         Instantiate(laserPrefab, transform.position + new Vector3(-0.55f, 0.48f, 0), Quaternion.identity);
     }
 
-    private void ShottiyShoot()
+    private void ShottityShoot()
     {
         if (Input.GetKey(KeyCode.Space))
         {
