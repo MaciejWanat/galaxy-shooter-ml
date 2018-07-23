@@ -16,14 +16,18 @@ public class Spawn_Manager : MonoBehaviour {
     private float DifficultyUpInterval = 5.0f;
     [SerializeField]
     private float DifficultyRaiseTempo = 1.0f;
-    private float EnemySpawnInterval = 7.0f;
+    private float EnemySpawnInterval = 6.0f;
     private int Difficulty = 0;
+
+    private GameObject Player;
     
     // Use this for initialization
     void Start()
     {
         uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+
+        Player = GameObject.FindGameObjectWithTag("Player");
         //override
         gameManager.gameOver = false;
         StartSpawnRoutines();
@@ -42,6 +46,8 @@ public class Spawn_Manager : MonoBehaviour {
         while (gameManager.gameOver == false)
         {
             Instantiate(enemyShipPrefab, new Vector3(Random.Range(-7f, 7f), 7, 0), Quaternion.identity);
+            //Spawn enemy at players face - to teach ML to avoid it
+            //Instantiate(enemyShipPrefab, new Vector3(Player.transform.position.x, 7, 0), Quaternion.identity);
             yield return new WaitForSeconds(EnemySpawnInterval);
         }
     }

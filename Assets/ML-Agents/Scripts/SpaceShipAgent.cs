@@ -7,7 +7,7 @@ public class SpaceShipAgent : Agent
 {
     Rigidbody2D rBody;
     public GameObject Target;
-    public float speed = 5;
+    public float speed = 10;
     private float previousDistance = float.MinValue;
 
     private void Start()
@@ -26,9 +26,18 @@ public class SpaceShipAgent : Agent
             relativePosition = Target.transform.position - gameObject.transform.position;
             AddVectorObs(Target.transform.position.x);
             AddVectorObs(Target.transform.position.y);
+
+            float distanceToTarget = Vector3.Distance(this.transform.position, Target.transform.position);
+            //float distanceToTarget = (this.transform.position - Target.transform.position).magnitude;
+            float distanceToTargetX = Mathf.Abs(this.transform.position.x - Target.transform.position.x);
+
+            AddVectorObs(distanceToTargetX);
+            AddVectorObs(distanceToTarget);
         }
         else
         {
+            AddVectorObs(0);
+            AddVectorObs(0);
             AddVectorObs(0);
             AddVectorObs(0);
         }
@@ -67,13 +76,23 @@ public class SpaceShipAgent : Agent
             else
             {
                 //Reward for surviving
-                AddReward(0.05f);
-                float distanceToTarget = Vector3.Distance(this.transform.position, Target.transform.position);
+                AddReward(0.01f);
 
+                float distanceToTarget = Vector3.Distance(this.transform.position, Target.transform.position);
+                //float distanceToTarget = (this.transform.position - Target.transform.position).magnitude;
+                float distanceToTargetX = Mathf.Abs(this.transform.position.x - Target.transform.position.x);
+                /*
+                //X is alligned - you are on collide course
+                if (distanceToTargetX < 3f)
+                {
+                    AddReward(-0.15f);
+                }
+                */
                 //Getting further
                 if (distanceToTarget > previousDistance)
                 {
-                    AddReward(0.2f);
+                    //Debug.Log(distanceToTarget + " > " + (previousDistance + 0.1).ToString());
+                    AddReward(0.1f);
                 }
                 previousDistance = distanceToTarget;
             }
