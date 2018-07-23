@@ -7,7 +7,7 @@ public class SpaceShipAgent : Agent
 {
     Rigidbody2D rBody;
     public GameObject Target;
-    public float speed = 10;
+    public float speed = 5;
     private float previousDistance = float.MinValue;
 
     private void Start()

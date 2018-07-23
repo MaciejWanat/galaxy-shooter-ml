@@ -122,11 +122,11 @@ Prefab:
     m_Modifications:
     - target: {fileID: 4785774200031750, guid: 60037dfe2173e27448d8c91b32c4276c, type: 2}
       propertyPath: m_LocalPosition.x
-      value: 0.9
+      value: -0.01
       objectReference: {fileID: 0}
     - target: {fileID: 4785774200031750, guid: 60037dfe2173e27448d8c91b32c4276c, type: 2}
       propertyPath: m_LocalPosition.y
-      value: -2.3
+      value: -2.07
       objectReference: {fileID: 0}
     - target: {fileID: 4785774200031750, guid: 60037dfe2173e27448d8c91b32c4276c, type: 2}
       propertyPath: m_LocalPosition.z
@@ -179,7 +179,7 @@ MonoBehaviour:
     onDemandDecision: 0
     numberOfActionsBetweenDecisions: 1
   Target: {fileID: 0}
-  speed: 10
+  speed: 5
 --- !u!1 &167770854
 GameObject:
   m_ObjectHideFlags: 0
@@ -891,7 +891,7 @@ MonoBehaviour:
     - 
     vectorActionSpaceType: 1
     vectorObservationSpaceType: 1
-  brainType: 2
+  brainType: 0
   CoreBrains:
   - {fileID: 242011876}
   - {fileID: 1869799302}
@@ -1146,7 +1146,7 @@ MonoBehaviour:
   m_Name: (Clone)(Clone)(Clone)(Clone)
   m_EditorClassIdentifier: 
   broadcast: 1
-  graphModel: {fileID: 4900000, guid: df00b0ec763ea144b888b590cae1ee7f, type: 3}
+  graphModel: {fileID: 4900000, guid: 6eff66f98cc7e6640921d77fea5fcca7, type: 3}
   graphScope: 
   graphPlaceholders: []
   BatchSizePlaceholderName: batch_size
