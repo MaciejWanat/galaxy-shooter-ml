@@ -45,9 +45,17 @@ public class Spawn_Manager : MonoBehaviour {
     {
         while (gameManager.gameOver == false)
         {
-            Instantiate(enemyShipPrefab, new Vector3(Random.Range(-3f, 3f), 7, 0), Quaternion.identity);
-            //Spawn enemy at players face - to teach ML to avoid it
-            //Instantiate(enemyShipPrefab, new Vector3(Player.transform.position.x, 7, 0), Quaternion.identity);
+            //Spawn enemy at players face from time to time - to teach ML to avoid it
+            int inYourFace = Random.Range(0, 3);
+
+            if(inYourFace == 0)
+            {
+                Instantiate(enemyShipPrefab, new Vector3(Player.transform.position.x, 7, 0), Quaternion.identity);
+            }
+            else
+            {
+                Instantiate(enemyShipPrefab, new Vector3(Random.Range(-3.5f, 3.5f), 7, 0), Quaternion.identity);
+            }
             yield return new WaitForSeconds(EnemySpawnInterval);
         }
     }
@@ -57,7 +65,7 @@ public class Spawn_Manager : MonoBehaviour {
         while(gameManager.gameOver == false)
         {
             int randomPowerUp = Random.Range(0, 3);
-            Instantiate(powerUps[randomPowerUp], new Vector3(Random.Range(-3f, 3f), 7, 0), Quaternion.identity);
+            Instantiate(powerUps[randomPowerUp], new Vector3(Random.Range(-3.5f, 3.5f), 7, 0), Quaternion.identity);
             int randomCooldown = Random.Range(0, 21);
             yield return new WaitForSeconds(randomCooldown);
         }

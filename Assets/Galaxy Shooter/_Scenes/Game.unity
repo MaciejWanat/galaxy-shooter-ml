@@ -122,11 +122,11 @@ Prefab:
     m_Modifications:
     - target: {fileID: 4785774200031750, guid: 60037dfe2173e27448d8c91b32c4276c, type: 2}
       propertyPath: m_LocalPosition.x
-      value: -0.01
+      value: 93.94
       objectReference: {fileID: 0}
     - target: {fileID: 4785774200031750, guid: 60037dfe2173e27448d8c91b32c4276c, type: 2}
       propertyPath: m_LocalPosition.y
-      value: -2.07
+      value: -2.18
       objectReference: {fileID: 0}
     - target: {fileID: 4785774200031750, guid: 60037dfe2173e27448d8c91b32c4276c, type: 2}
       propertyPath: m_LocalPosition.z
@@ -891,7 +891,7 @@ MonoBehaviour:
     - 
     vectorActionSpaceType: 1
     vectorObservationSpaceType: 1
-  brainType: 0
+  brainType: 2
   CoreBrains:
   - {fileID: 242011876}
   - {fileID: 1869799302}

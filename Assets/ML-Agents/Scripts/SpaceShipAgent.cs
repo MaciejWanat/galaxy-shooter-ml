@@ -19,7 +19,7 @@ public class SpaceShipAgent : Agent
     {
         Target = GetEnemy();
 
-        Vector3 relativePosition = new Vector3(0, 0, 0);
+        Vector3 relativePosition = new Vector3(-100, -100, -100);
 
         if (Target)
         {
@@ -36,10 +36,10 @@ public class SpaceShipAgent : Agent
         }
         else
         {
-            AddVectorObs(0);
-            AddVectorObs(0);
-            AddVectorObs(0);
-            AddVectorObs(0);
+            AddVectorObs(-100);
+            AddVectorObs(-100);
+            AddVectorObs(-100);
+            AddVectorObs(-100);
         }
 
         AddVectorObs(relativePosition.x);
@@ -76,25 +76,29 @@ public class SpaceShipAgent : Agent
             else
             {
                 //Reward for surviving
-                AddReward(0.01f);
+                //AddReward(0.01f);
 
                 float distanceToTarget = Vector3.Distance(this.transform.position, Target.transform.position);
                 //float distanceToTarget = (this.transform.position - Target.transform.position).magnitude;
                 float distanceToTargetX = Mathf.Abs(this.transform.position.x - Target.transform.position.x);
-                /*
+
                 //X is alligned - you are on collide course
-                if (distanceToTargetX < 3f)
+                if (distanceToTargetX < 2f)
                 {
-                    AddReward(-0.15f);
+                    AddReward(-0.05f);
                 }
-                */
+                else
+                {
+                    AddReward(0.05f);
+                }
+                /*
                 //Getting further
                 if (distanceToTarget > (previousDistance + 0.1f))
                 {
                     //Debug.Log(distanceToTarget + " > " + (previousDistance + 0.1).ToString());
                     AddReward(0.1f);
                 }
-                previousDistance = distanceToTarget;
+                previousDistance = distanceToTarget;*/
             }
         }
         else
@@ -106,8 +110,8 @@ public class SpaceShipAgent : Agent
         controlSignal.x = vectorAction[0];
         controlSignal.y = vectorAction[1];
 
-        transform.Translate(Vector3.right * controlSignal.x * speed * Time.deltaTime);
-        transform.Translate(Vector3.up * controlSignal.y * speed * Time.deltaTime);
+        transform.Translate(Vector3.right * controlSignal.x * (speed * 2) * Time.deltaTime);
+        transform.Translate(Vector3.up * controlSignal.y * (speed * 2) * Time.deltaTime);
         //rBody.AddForce(controlSignal * speed);
     }
 
