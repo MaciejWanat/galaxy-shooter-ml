@@ -93,7 +93,10 @@ public class SpaceShipAgent : Agent
     {
         var relativePosition = Target.transform.position - gameObject.transform.position;
 
-        if (relativePosition.x < 1 && relativePosition.y < 1)
+        relativePosition.x = Mathf.Abs(relativePosition.x);
+        relativePosition.y = Mathf.Abs(relativePosition.y);
+
+        if (relativePosition.x < 1 && relativePosition.y < 2)
         {
             return true;
         }
