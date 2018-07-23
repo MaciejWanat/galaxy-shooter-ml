@@ -91,6 +91,14 @@ public class SpaceShipAgent : Agent
 
     private bool CheckCollision(GameObject target)
     {
+        var thisCollider = gameObject.GetComponent<Collider2D>();
+        var contactFiler = new ContactFilter2D { useTriggers = true };
+
+        return thisCollider.IsTouching(target.GetComponent<Collider2D>(), contactFiler);
+    }
+
+    private bool CheckCollisionDistance(GameObject target)
+    {
         var relativePosition = Target.transform.position - gameObject.transform.position;
 
         relativePosition.x = Mathf.Abs(relativePosition.x);
@@ -101,14 +109,6 @@ public class SpaceShipAgent : Agent
             return true;
         }
         return false;
-    }
-
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.tag == "Enemy")
-        {
-
-        }
     }
 
     private GameObject GetEnemy()
