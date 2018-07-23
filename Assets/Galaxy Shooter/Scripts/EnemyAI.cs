@@ -52,6 +52,8 @@ public class EnemyAI : MonoBehaviour {
             uiManager.UpdateScore();
             Explode(enemyExplosionPrefab);            
         }
+        //Enemy is destroyed when training fucntion decects collision with player
+        /*
         else
         if (other.tag == "Player")
         {
@@ -67,5 +69,6 @@ public class EnemyAI : MonoBehaviour {
             //Destroy(this.gameObject);
             Explode(explosionPrefab);
         }
+        */
     }
 }

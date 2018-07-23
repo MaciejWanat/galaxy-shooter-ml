@@ -17,7 +17,8 @@ public class SpaceShipAgent : Agent
 
     public override void CollectObservations()
     {
-        Target = GameObject.Find("Enemy");
+        Target = GetEnemy();
+
         Vector3 relativePosition = new Vector3(0, 0, 0);
 
         if (Target)
@@ -42,6 +43,10 @@ public class SpaceShipAgent : Agent
 
     public override void AgentReset()
     {
+        Target = GetEnemy();
+        if (Target)
+            Destroy(Target);
+
         this.transform.position = Vector3.zero;
         this.rBody.velocity = Vector2.zero;
         this.rBody.angularVelocity = 0;
@@ -49,12 +54,9 @@ public class SpaceShipAgent : Agent
 
     public override void AgentAction(float[] vectorAction, string textAction)
     {
-        //Reward for surviving
-        AddReward(0.05f);
+        Target = GetEnemy();
 
-        Target = GameObject.Find("Enemy");
-
-        if(Target)
+        if (Target)
         {
             //Collided
             if (CheckCollision(Target))
@@ -62,15 +64,19 @@ public class SpaceShipAgent : Agent
                 AddReward(-1.0f);
                 Done();
             }
-
-            float distanceToTarget = Vector3.Distance(this.transform.position, Target.transform.position);
-            
-            //Getting further
-            if(distanceToTarget > previousDistance)
+            else
             {
-                AddReward(0.1f);
+                //Reward for surviving
+                AddReward(0.05f);
+                float distanceToTarget = Vector3.Distance(this.transform.position, Target.transform.position);
+
+                //Getting further
+                if (distanceToTarget > previousDistance)
+                {
+                    AddReward(0.1f);
+                }
+                previousDistance = distanceToTarget;
             }
-            previousDistance = distanceToTarget;
         }
         else
         {
@@ -81,17 +87,42 @@ public class SpaceShipAgent : Agent
         controlSignal.x = vectorAction[0];
         controlSignal.z = vectorAction[1];
         rBody.AddForce(controlSignal * speed);
-
     }
 
     private bool CheckCollision(GameObject target)
     {
         var relativePosition = Target.transform.position - gameObject.transform.position;
 
-        if(relativePosition.x < 3 && relativePosition.y < 5)
+        if (relativePosition.x < 1 && relativePosition.y < 1)
         {
             return true;
         }
         return false;
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.tag == "Enemy")
+        {
+
+        }
+    }
+
+    private GameObject GetEnemy()
+    {
+        if (Target == null)
+        {
+            var TargetsArr = GameObject.FindGameObjectsWithTag("Enemy");
+
+            if (TargetsArr.Length > 0)
+            {
+                return TargetsArr[0];
+            }
+
+            return null;
+        }
+        else
+            return Target;
+
     }
 }

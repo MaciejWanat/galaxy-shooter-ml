@@ -16,7 +16,7 @@ public class Spawn_Manager : MonoBehaviour {
     private float DifficultyUpInterval = 5.0f;
     [SerializeField]
     private float DifficultyRaiseTempo = 1.0f;
-    private float EnemySpawnInterval = 5.0f;
+    private float EnemySpawnInterval = 7.0f;
     private int Difficulty = 0;
     
     // Use this for initialization
@@ -32,7 +32,8 @@ public class Spawn_Manager : MonoBehaviour {
     public void StartSpawnRoutines()
     {
         StartCoroutine(EnemySpawnRoutine());
-        StartCoroutine(PowerUpSpawnRoutine());
+        //Disable power ups for now
+        //StartCoroutine(PowerUpSpawnRoutine());
         StartCoroutine(SpiceUpTheTempoRoutine());
     }
 
