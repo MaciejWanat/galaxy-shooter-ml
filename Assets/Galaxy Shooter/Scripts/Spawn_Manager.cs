@@ -16,7 +16,7 @@ public class Spawn_Manager : MonoBehaviour {
     private float DifficultyUpInterval = 5.0f;
     [SerializeField]
     private float DifficultyRaiseTempo = 1.0f;
-    private float EnemySpawnInterval = 5.0f;
+    private float EnemySpawnInterval = 6.0f;
     private int Difficulty = 0;
 
     private GameObject Player;
@@ -29,31 +29,30 @@ public class Spawn_Manager : MonoBehaviour {
 
         Player = GameObject.FindGameObjectWithTag("Player");
         //override
-        gameManager.gameOver = false;        
-        StartSpawnRoutines();
-    }
+        gameManager.gameOver = false;
 
-    public void SpawnEnemy()
-    {
-        Instantiate(enemyShipPrefab, new Vector3(Random.Range(-3.5f, 3.5f), 7, 0), Quaternion.identity);
+        StartSpawnRoutines();
     }
 
     public void StartSpawnRoutines()
     {
         //StartCoroutine(EnemySpawnRoutine());
-        //Disable power ups for now
-        //StartCoroutine(PowerUpSpawnRoutine());
+        //StartCoroutine(PowerUpSpawnRoutine()); 
         //StartCoroutine(SpiceUpTheTempoRoutine());
+    }
+
+    public void SpawnEnemy()
+    {
+        //spawn one enemy
+        Instantiate(enemyShipPrefab, new Vector3(Random.Range(-3.5f, 3.5f), 7, 0), Quaternion.identity);
     }
 
     IEnumerator EnemySpawnRoutine()
     {
         while (gameManager.gameOver == false)
         {
-            //Instantiate(enemyShipPrefab, new Vector3(Random.Range(-7.5f, 7.5f), 7, 0), Quaternion.identity);
-
             //Spawn enemy at players face from time to time - to teach ML to avoid it
-            int inYourFace = Random.Range(0, 2);
+            int inYourFace = Random.Range(0, 3);
 
             if(inYourFace == 0)
             {
@@ -63,7 +62,6 @@ public class Spawn_Manager : MonoBehaviour {
             {
                 Instantiate(enemyShipPrefab, new Vector3(Random.Range(-3.5f, 3.5f), 7, 0), Quaternion.identity);
             }
-            
             yield return new WaitForSeconds(EnemySpawnInterval);
         }
     }
@@ -102,7 +100,6 @@ public class Spawn_Manager : MonoBehaviour {
     {
         EnemySpawnInterval = 5.0f;
         Difficulty = 0;
-        uiManager.UpdateDifficulty(Difficulty);
     }
 }
 

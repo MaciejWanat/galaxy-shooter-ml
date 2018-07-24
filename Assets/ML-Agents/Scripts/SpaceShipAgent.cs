@@ -1,5 +1,4 @@
 ﻿using MLAgents;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,94 +9,42 @@ public class SpaceShipAgent : Agent
     public GameObject Target;
     public float speed = 5;
     private float previousDistance = float.MinValue;
-    private float previousYPos = float.MaxValue;
-    private Spawn_Manager spawn_Manager;
+    private Spawn_Manager spawn_manager;
 
     private void Start()
     {
         rBody = GetComponent<Rigidbody2D>();
-        spawn_Manager = GameObject.Find("Spawn_Manager").GetComponent<Spawn_Manager>();
+        spawn_manager = GameObject.Find("Spawn_Manager").GetComponent<Spawn_Manager>();
     }
 
     public override void CollectObservations()
     {
-        var EnemiesArr = GameObject.FindGameObjectsWithTag("Enemy");
-        float[] singleEnemyAttr = new float[7];
-        List<float> enemiesAttributes = new List<float>(7);
-        int i = 0;
+        Target = GetEnemy();
 
-        if (EnemiesArr.Length == 0)
-        {
-            spawn_Manager.SpawnEnemy();
-        }
+        Vector3 relativePosition = Target.transform.position - gameObject.transform.position;
+        AddVectorObs(Target.transform.position.x);
+        AddVectorObs(Target.transform.position.y);
 
-        EnemiesArr = GameObject.FindGameObjectsWithTag("Enemy");
+        float distanceToTarget = Vector3.Distance(this.transform.position, Target.transform.position);
+        //float distanceToTarget = (this.transform.position - Target.transform.position).magnitude;
+        float distanceToTargetX = Mathf.Abs(this.transform.position.x - Target.transform.position.x);
 
-        foreach (var enemy in EnemiesArr)
-        {
-            Target = enemy;
-            Vector3 relativePosition = Target.transform.position - gameObject.transform.position;
-            float distanceToTarget = Vector3.Distance(this.transform.position, Target.transform.position);
-            //float distanceToTarget = (this.transform.position - Target.transform.position).magnitude;
-            float distanceToTargetX = Mathf.Abs(this.transform.position.x - Target.transform.position.x);
-
-            singleEnemyAttr[0] = (Target.transform.position.x);
-            singleEnemyAttr[1] = (Target.transform.position.y);
-            singleEnemyAttr[2] = (distanceToTargetX);
-            singleEnemyAttr[3] = (distanceToTarget);
-            singleEnemyAttr[4] = (relativePosition.x);
-            singleEnemyAttr[5] = (relativePosition.y);
-            singleEnemyAttr[6] = (enemy.GetComponent<EnemyAI>().speed);
-
-            foreach(var attr in singleEnemyAttr)
-            {
-                enemiesAttributes.Add(attr);
-            }               
-        }
-        
-        /*
-        //if list isnt full, fill it with "enemies" observations out of game field
-        while(enemiesAttributes.Count < 7)
-        {
-            var fakePos = new Vector3(0, 7, 0);
-
-            Vector3 relativePosition = fakePos - gameObject.transform.position;
-            float distanceToTarget = Vector3.Distance(this.transform.position, fakePos);
-            //float distanceToTarget = (this.transform.position - Target.transform.position).magnitude;
-            float distanceToTargetX = Mathf.Abs(this.transform.position.x - fakePos.x);
-
-            singleEnemyAttr[0] = (fakePos.x);
-            singleEnemyAttr[1] = (fakePos.y);
-            singleEnemyAttr[2] = (distanceToTargetX);
-            singleEnemyAttr[3] = (distanceToTarget);
-            singleEnemyAttr[4] = (relativePosition.x);
-            singleEnemyAttr[5] = (relativePosition.y);
-            singleEnemyAttr[6] = (10); //enemy speed
-
-            foreach (var attr in singleEnemyAttr)
-            {
-                enemiesAttributes.Add(attr);
-            }
-        }
-        */
-        AddVectorObs(enemiesAttributes);
+        AddVectorObs(distanceToTargetX);
+        AddVectorObs(distanceToTarget);
+        AddVectorObs(relativePosition.x);
+        AddVectorObs(relativePosition.y);
         AddVectorObs(gameObject.transform.position.x);
         AddVectorObs(gameObject.transform.position.y);
+        AddVectorObs(rBody.velocity.x);
+        AddVectorObs(rBody.velocity.y);
     }
 
     public override void AgentReset()
     {
-        var EnemiesArr = GameObject.FindGameObjectsWithTag("Enemy");
+        Target = GetEnemy();
+        if (Target)
+            Destroy(Target);
 
-        if (EnemiesArr.Length > 0)
-        {
-            foreach (var enemy in EnemiesArr)
-            {
-                Destroy(enemy);
-            }
-        }
-        
-        spawn_Manager.ResetHardLvlVars();
         this.transform.position = new Vector3(0, 0, 0);
         this.rBody.velocity = Vector2.zero;
         this.rBody.angularVelocity = 0;
@@ -105,42 +52,55 @@ public class SpaceShipAgent : Agent
 
     public override void AgentAction(float[] vectorAction, string textAction)
     {
-        var EnemiesArr = GameObject.FindGameObjectsWithTag("Enemy");
+        Target = GetEnemy();
 
-        if (EnemiesArr.Length > 0)
+        if (Target)
         {
-            Target = EnemiesArr[0];
-
             //Collided
             if (CheckCollision(Target))
             {
                 AddReward(-5.0f);
                 Done();
             }
-
-            //Reward for surviving
-            //AddReward(0.01f);
-
-            float distanceToTarget = Vector3.Distance(this.transform.position, Target.transform.position);
-            //float distanceToTarget = (this.transform.position - Target.transform.position).magnitude;
-            float distanceToTargetX = Mathf.Abs(this.transform.position.x - Target.transform.position.x);
-
-            //X is alligned - you are on collide course
-            if (distanceToTargetX < 2.4f)
-            {
-                AddReward(-0.05f);
-            }
             else
             {
-                AddReward(0.05f);
-            }  
+                //Reward for surviving
+                //AddReward(0.01f);
+
+                float distanceToTarget = Vector3.Distance(this.transform.position, Target.transform.position);
+                //float distanceToTarget = (this.transform.position - Target.transform.position).magnitude;
+                float distanceToTargetX = Mathf.Abs(this.transform.position.x - Target.transform.position.x);
+
+                //X is alligned - you are on collide course
+                if (distanceToTargetX < 2f)
+                {
+                    AddReward(-0.05f);
+                }
+                else
+                {
+                    AddReward(0.05f);
+                }
+                /*
+                //Getting further
+                if (distanceToTarget > (previousDistance + 0.1f))
+                {
+                    //Debug.Log(distanceToTarget + " > " + (previousDistance + 0.1).ToString());
+                    AddReward(0.1f);
+                }
+                previousDistance = distanceToTarget;*/
+            }
+        }
+        else
+        {
+            previousDistance = float.MinValue;
         }
 
         Vector3 controlSignal = Vector3.zero;
         controlSignal.x = vectorAction[0];
         controlSignal.y = vectorAction[1];
 
-        transform.Translate(controlSignal * (speed * 2) * Time.deltaTime);
+        transform.Translate(Vector3.right * controlSignal.x * (speed * 2) * Time.deltaTime);
+        transform.Translate(Vector3.up * controlSignal.y * (speed * 2) * Time.deltaTime);
         //rBody.AddForce(controlSignal * speed);
     }
 
@@ -152,7 +112,7 @@ public class SpaceShipAgent : Agent
         return thisCollider.IsTouching(target.GetComponent<Collider2D>(), contactFiler);
     }
 
-    private GameObject GetSingleEnemy()
+    private GameObject GetEnemy()
     {
         if (Target == null)
         {
@@ -161,6 +121,12 @@ public class SpaceShipAgent : Agent
             if (TargetsArr.Length > 0)
             {
                 return TargetsArr[0];
+            }
+            else
+            {
+                //spawn one enemy
+                spawn_manager.SpawnEnemy();
+                return GameObject.FindGameObjectWithTag("Enemy");
             }
 
             return null;

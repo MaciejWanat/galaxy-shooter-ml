@@ -8,7 +8,8 @@ public class EnemyAI : MonoBehaviour {
     private GameObject enemyExplosionPrefab;
     [SerializeField]
     private GameObject explosionPrefab;
-    public float speed = 10.0f;
+    [SerializeField]
+    private float speed = 10.0f;
     private UIManager uiManager;
     [SerializeField]
     private AudioClip clip;
@@ -30,8 +31,7 @@ public class EnemyAI : MonoBehaviour {
         if(transform.position.y < -7)
         {
             //Destroy(this.gameObject);
-
-            int inYourFace = Random.Range(0, 2);
+            int inYourFace = Random.Range(0, 3);
 
             if (inYourFace == 0)
             {
@@ -39,11 +39,13 @@ public class EnemyAI : MonoBehaviour {
             }
             else
             {
-                float randomX = Random.Range(-3.5f, 3f);
-                transform.position = new Vector3(randomX, 7, 0);
+                transform.position =  new Vector3(Random.Range(-3.5f, 3.5f), 7, 0);
             }
 
-            
+             /*
+                float randomX = Random.Range(-7f, 7f);
+                transform.position = new Vector3(randomX, 7, 0);
+             */
         }
 	}
 
