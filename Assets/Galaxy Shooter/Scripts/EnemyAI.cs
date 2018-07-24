@@ -13,11 +13,13 @@ public class EnemyAI : MonoBehaviour {
     [SerializeField]
     private AudioClip clip;
     public bool collideWithPlayer = false;
+    private GameObject Player;
 
     // Use this for initialization
     void Start ()
     {
         uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
+        Player = GameObject.FindGameObjectWithTag("Player");
     }
 	
 	// Update is called once per frame
@@ -27,11 +29,21 @@ public class EnemyAI : MonoBehaviour {
 
         if(transform.position.y < -7)
         {
-            Destroy(this.gameObject);
-            /*
-            float randomX = Random.Range(-7f, 7f);
-            transform.position = new Vector3(randomX, 7, 0);
-            */
+            //Destroy(this.gameObject);
+
+            int inYourFace = Random.Range(0, 2);
+
+            if (inYourFace == 0)
+            {
+                transform.position = new Vector3(Player.transform.position.x, 7, 0);
+            }
+            else
+            {
+                float randomX = Random.Range(-3.5f, 3f);
+                transform.position = new Vector3(randomX, 7, 0);
+            }
+
+            
         }
 	}
 
