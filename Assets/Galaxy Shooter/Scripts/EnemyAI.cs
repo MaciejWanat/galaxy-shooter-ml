@@ -56,15 +56,28 @@ public class EnemyAI : MonoBehaviour {
         AudioSource.PlayClipAtPoint(clip, Camera.main.transform.position);
     }
 
+    public void PlayExplode()
+    {
+        Explode(enemyExplosionPrefab);
+    }
+
     private void OnTriggerEnter2D(Collider2D other)
     {
+        /*
         if (other.tag == "Laser")
         {
             Destroy(other.gameObject);
             Destroy(this.gameObject);
+            
+            if(!uiManager)
+            {
+                uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
+            }
+
             uiManager.UpdateScore();
             Explode(enemyExplosionPrefab);            
         }
+        */
         //Enemy is destroyed when training fucntion decects collision with player
         /*
         else

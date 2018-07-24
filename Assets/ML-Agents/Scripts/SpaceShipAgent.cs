@@ -10,11 +10,15 @@ public class SpaceShipAgent : Agent
     public float speed = 5;
     private float previousDistance = float.MinValue;
     private Spawn_Manager spawn_manager;
+    private GameObject player;
+    private UIManager uiManager;
 
     private void Start()
     {
         rBody = GetComponent<Rigidbody2D>();
         spawn_manager = GameObject.Find("Spawn_Manager").GetComponent<Spawn_Manager>();
+        uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
+        player = GameObject.FindGameObjectWithTag("Player");
     }
 
     public override void CollectObservations()
@@ -41,9 +45,19 @@ public class SpaceShipAgent : Agent
 
     public override void AgentReset()
     {
+        //destroy enemies
         Target = GetEnemy();
         if (Target)
             Destroy(Target);
+        
+        //destroy lasers
+        var Lasers = GameObject.FindGameObjectsWithTag("Laser");
+        uiManager.ResetScore();
+
+        foreach (var laser in Lasers)
+        {
+            Destroy(laser);
+        }
 
         this.transform.position = new Vector3(0, 0, 0);
         this.rBody.velocity = Vector2.zero;
@@ -56,39 +70,63 @@ public class SpaceShipAgent : Agent
 
         if (Target)
         {
+            var Lasers = GameObject.FindGameObjectsWithTag("Laser");
+
+            foreach(var laser in Lasers)
+            {
+                if(CheckCollision(laser, Target))
+                {
+                    AddReward(1.0f);
+                    uiManager.UpdateScore();
+                    Target.GetComponent<EnemyAI>().PlayExplode();
+                    Destroy(Target);
+                    Destroy(laser);
+                }
+            }
+
             //Collided
             if (CheckCollision(Target))
             {
-                AddReward(-5.0f);
+                AddReward(-1.0f);
                 Done();
             }
-            else
+
+            float distanceToTargetX = Mathf.Abs(this.transform.position.x - Target.transform.position.x);
+
+            //X is alligned and you shoot = reward
+            if (vectorAction[2] > 0 && distanceToTargetX < 2f)
             {
-                //Reward for surviving
-                //AddReward(0.01f);
-
-                float distanceToTarget = Vector3.Distance(this.transform.position, Target.transform.position);
-                //float distanceToTarget = (this.transform.position - Target.transform.position).magnitude;
-                float distanceToTargetX = Mathf.Abs(this.transform.position.x - Target.transform.position.x);
-
-                //X is alligned - you are on collide course
-                if (distanceToTargetX < 2f)
-                {
-                    AddReward(-0.05f);
-                }
-                else
-                {
-                    AddReward(0.05f);
-                }
-                /*
-                //Getting further
-                if (distanceToTarget > (previousDistance + 0.1f))
-                {
-                    //Debug.Log(distanceToTarget + " > " + (previousDistance + 0.1).ToString());
-                    AddReward(0.1f);
-                }
-                previousDistance = distanceToTarget;*/
+                AddReward(0.05f);
             }
+
+            //Now point is to shoot enemy - not to get out of its way
+            //else
+            //{
+            //    //Reward for surviving
+            //    //AddReward(0.01f);
+
+            //    float distanceToTarget = Vector3.Distance(this.transform.position, Target.transform.position);
+            //    //float distanceToTarget = (this.transform.position - Target.transform.position).magnitude;
+            //    float distanceToTargetX = Mathf.Abs(this.transform.position.x - Target.transform.position.x);
+
+            //    //X is alligned - you are on collide course
+            //    if (distanceToTargetX < 2f)
+            //    {
+            //        AddReward(-0.05f);
+            //    }
+            //    else
+            //    {
+            //        AddReward(0.05f);
+            //    }
+            //    /*
+            //    //Getting further
+            //    if (distanceToTarget > (previousDistance + 0.1f))
+            //    {
+            //        //Debug.Log(distanceToTarget + " > " + (previousDistance + 0.1).ToString());
+            //        AddReward(0.1f);
+            //    }
+            //    previousDistance = distanceToTarget;*/
+            //}
         }
         else
         {
@@ -101,6 +139,12 @@ public class SpaceShipAgent : Agent
 
         transform.Translate(Vector3.right * controlSignal.x * (speed * 2) * Time.deltaTime);
         transform.Translate(Vector3.up * controlSignal.y * (speed * 2) * Time.deltaTime);
+
+        if(vectorAction[2] > 0)
+        {
+            player.GetComponent<Player>().Shoot();
+        }
+
         //rBody.AddForce(controlSignal * speed);
     }
 
@@ -110,6 +154,14 @@ public class SpaceShipAgent : Agent
         var contactFiler = new ContactFilter2D { useTriggers = true };
 
         return thisCollider.IsTouching(target.GetComponent<Collider2D>(), contactFiler);
+    }
+
+    private bool CheckCollision(GameObject obj1, GameObject obj2)
+    {
+        var obj1Collider = obj1.GetComponent<Collider2D>();
+        var contactFiler = new ContactFilter2D { useTriggers = true };
+
+        return obj1Collider.IsTouching(obj2.GetComponent<Collider2D>(), contactFiler);
     }
 
     private GameObject GetEnemy()

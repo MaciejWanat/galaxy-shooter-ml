@@ -72,14 +72,28 @@ public class Player : MonoBehaviour {
         Instantiate(laserPrefab, transform.position + new Vector3(-0.55f, 0.48f, 0), Quaternion.identity);
     }
 
+    public void Shoot()
+    {        
+        if (Time.time > canFire)
+        {
+            audioSource.Play();
+            if (canTriple)
+                TripleShoot();
+            else
+                Instantiate(laserPrefab, transform.position + new Vector3(0, 0.88f, 0), Quaternion.identity);
+
+            canFire = Time.time + fireRate;
+        }
+    }
+
     private void ShottityShoot()
     {
         if (Input.GetKey(KeyCode.Space))
-        {
-            audioSource.Play();
+        {            
             if (Time.time > canFire)
             {
-                if(canTriple)
+                audioSource.Play();
+                if (canTriple)
                     TripleShoot();
                 else
                     Instantiate(laserPrefab, transform.position + new Vector3(0, 0.88f, 0), Quaternion.identity);

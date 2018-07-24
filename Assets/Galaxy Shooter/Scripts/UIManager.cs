@@ -34,6 +34,11 @@ public class UIManager : MonoBehaviour {
         scoreText.text = "Score: " + score;
     }
 
+    public void ResetScore()
+    {
+        scoreText.text = "Score: " + 0;
+    }
+
     public void UpdateDifficulty(float difficulty)
     {
         difficultyText.text = "Difficulty: " + difficulty.ToString();
