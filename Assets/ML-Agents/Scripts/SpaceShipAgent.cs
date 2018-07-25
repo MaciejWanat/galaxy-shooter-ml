@@ -56,22 +56,6 @@ public class SpaceShipAgent : Agent
 
         int playerPostionInterval = (int)Math.Ceiling(player.transform.position.x);
         AddVectorObs(playerPostionInterval);
-
-        //Target = GetEnemy();
-
-        //Vector3 relativePosition = Target.transform.position - gameObject.transform.position;
-        //AddVectorObs(Target.transform.position.x);
-        //AddVectorObs(Target.transform.position.y);
-
-        //float distanceToTarget = Vector3.Distance(this.transform.position, Target.transform.position);
-        //float distanceToTargetX = Mathf.Abs(this.transform.position.x - Target.transform.position.x);
-
-        //AddVectorObs(distanceToTargetX);
-        //AddVectorObs(distanceToTarget);
-        //AddVectorObs(relativePosition.x);
-        //AddVectorObs(relativePosition.y);
-        //AddVectorObs(gameObject.transform.position.x);
-        //AddVectorObs(gameObject.transform.position.y);
     }
 
     public override void AgentReset()
@@ -80,10 +64,13 @@ public class SpaceShipAgent : Agent
         globalIntervalsInfo = new bool[intervalArrSizeX, intervalArrSizeY];
 
         //destroy enemies
-        Target = GetEnemy();
-        if (Target)
-            Destroy(Target);
-        
+        var EnemiesArr = GameObject.FindGameObjectsWithTag("Enemy");
+
+        foreach (var enemy in EnemiesArr)
+        {
+            Destroy(enemy);
+        }
+
         //destroy lasers
         var Lasers = GameObject.FindGameObjectsWithTag("Laser");
         uiManager.ResetScore();
@@ -113,18 +100,10 @@ public class SpaceShipAgent : Agent
             {          
                 if (CheckCollision(laser, enemy))
                 {
-                    AddReward(1.0f + uiManager.score);
+                    AddReward(5.0f + uiManager.score);
                     uiManager.UpdateScore();
-
-                    RemoveEnemyFromInterval(enemy); // deleting enemy from interval
-                    int enemyPostionIntervalX = (int)Math.Ceiling(enemy.transform.position.x);
-                    int enemyPostionIntervalY = (int)Math.Ceiling(enemy.transform.position.y);
-
                     enemy.GetComponent<EnemyAI>().PlayExplode();                    
                     Destroy(enemy);
-
-                    ScanEnemiesInIntervals(enemyPostionIntervalX, enemyPostionIntervalY); //checking if any another enemy is in the interval
-
                     Destroy(laser);
                 }
             }
