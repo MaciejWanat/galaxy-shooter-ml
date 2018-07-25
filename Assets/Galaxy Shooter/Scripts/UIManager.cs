@@ -37,6 +37,7 @@ public class UIManager : MonoBehaviour {
     public void ResetScore()
     {
         scoreText.text = "Score: " + 0;
+        score = 0;
     }
 
     public void UpdateDifficulty(float difficulty)

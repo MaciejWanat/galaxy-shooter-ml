@@ -1,4 +1,5 @@
 ﻿using MLAgents;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,8 +14,20 @@ public class SpaceShipAgent : Agent
     private GameObject player;
     private UIManager uiManager;
 
+    //map informations
+    [SerializeField]
+    private int mapSizeX = 14;
+    [SerializeField]
+    private int iterationStep = 1;
+    private int leftSide;
+    private int rightSide;
+    private Dictionary<int, int> mappedCoords = new Dictionary<int, int>();
+    private int intervalArrSize; // mapSizeX - iterationStep
+    private bool[] globalIntervalsInfo;
+
     private void Start()
     {
+        SetCoordsMap();
         rBody = GetComponent<Rigidbody2D>();
         spawn_manager = GameObject.Find("Spawn_Manager").GetComponent<Spawn_Manager>();
         uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
@@ -23,28 +36,40 @@ public class SpaceShipAgent : Agent
 
     public override void CollectObservations()
     {
-        Target = GetEnemy();
+        foreach(var interval in globalIntervalsInfo)
+        {
+            AddVectorObs(interval);
+        }
 
-        Vector3 relativePosition = Target.transform.position - gameObject.transform.position;
-        AddVectorObs(Target.transform.position.x);
-        AddVectorObs(Target.transform.position.y);
-
-        float distanceToTarget = Vector3.Distance(this.transform.position, Target.transform.position);
-        //float distanceToTarget = (this.transform.position - Target.transform.position).magnitude;
-        float distanceToTargetX = Mathf.Abs(this.transform.position.x - Target.transform.position.x);
-
-        AddVectorObs(distanceToTargetX);
-        AddVectorObs(distanceToTarget);
-        AddVectorObs(relativePosition.x);
-        AddVectorObs(relativePosition.y);
+        AddVectorObs(IsEnemyInFront());
         AddVectorObs(gameObject.transform.position.x);
         AddVectorObs(gameObject.transform.position.y);
-        AddVectorObs(rBody.velocity.x);
-        AddVectorObs(rBody.velocity.y);
+
+        int playerPostionInterval = (int)Math.Ceiling(player.transform.position.x);
+        AddVectorObs(playerPostionInterval);
+
+        //Target = GetEnemy();
+
+        //Vector3 relativePosition = Target.transform.position - gameObject.transform.position;
+        //AddVectorObs(Target.transform.position.x);
+        //AddVectorObs(Target.transform.position.y);
+
+        //float distanceToTarget = Vector3.Distance(this.transform.position, Target.transform.position);
+        //float distanceToTargetX = Mathf.Abs(this.transform.position.x - Target.transform.position.x);
+
+        //AddVectorObs(distanceToTargetX);
+        //AddVectorObs(distanceToTarget);
+        //AddVectorObs(relativePosition.x);
+        //AddVectorObs(relativePosition.y);
+        //AddVectorObs(gameObject.transform.position.x);
+        //AddVectorObs(gameObject.transform.position.y);
     }
 
     public override void AgentReset()
     {
+        //reset interval info
+        globalIntervalsInfo = new bool[intervalArrSize];
+
         //destroy enemies
         Target = GetEnemy();
         if (Target)
@@ -53,6 +78,9 @@ public class SpaceShipAgent : Agent
         //destroy lasers
         var Lasers = GameObject.FindGameObjectsWithTag("Laser");
         uiManager.ResetScore();
+
+        //reset difficulty
+        spawn_manager.ResetHardLvlVars();
 
         foreach (var laser in Lasers)
         {
@@ -66,86 +94,55 @@ public class SpaceShipAgent : Agent
 
     public override void AgentAction(float[] vectorAction, string textAction)
     {
-        Target = GetEnemy();
+        var Lasers = GameObject.FindGameObjectsWithTag("Laser");
+        var Enemies = GameObject.FindGameObjectsWithTag("Enemy");
 
-        if (Target)
+        //Enemy hit
+        foreach (var enemy in Enemies)
         {
-            var Lasers = GameObject.FindGameObjectsWithTag("Laser");
-
-            foreach(var laser in Lasers)
-            {
-                if(CheckCollision(laser, Target))
+            foreach (var laser in Lasers)
+            {          
+                if (CheckCollision(laser, enemy))
                 {
-                    AddReward(1.0f);
+                    AddReward(1.0f + uiManager.score);
                     uiManager.UpdateScore();
-                    Target.GetComponent<EnemyAI>().PlayExplode();
-                    Destroy(Target);
+
+                    RemoveEnemyFromInterval(enemy); // deleting enemy from interval
+                    int enemyPostionInterval = (int)Math.Ceiling(enemy.transform.position.x);
+
+                    enemy.GetComponent<EnemyAI>().PlayExplode();                    
+                    Destroy(enemy);
+
+                    ScanEnemiesInIntervals(enemyPostionInterval); //checking if any another enemy is in the interval
+
                     Destroy(laser);
                 }
             }
 
             //Collided
-            if (CheckCollision(Target))
+            if (CheckCollision(enemy))
             {
                 AddReward(-1.0f);
                 Done();
             }
-
-            float distanceToTargetX = Mathf.Abs(this.transform.position.x - Target.transform.position.x);
-
-            //X is alligned and you shoot = reward
-            if (vectorAction[2] > 0 && distanceToTargetX < 2f)
-            {
-                AddReward(0.05f);
-            }
-
-            //Now point is to shoot enemy - not to get out of its way
-            //else
-            //{
-            //    //Reward for surviving
-            //    //AddReward(0.01f);
-
-            //    float distanceToTarget = Vector3.Distance(this.transform.position, Target.transform.position);
-            //    //float distanceToTarget = (this.transform.position - Target.transform.position).magnitude;
-            //    float distanceToTargetX = Mathf.Abs(this.transform.position.x - Target.transform.position.x);
-
-            //    //X is alligned - you are on collide course
-            //    if (distanceToTargetX < 2f)
-            //    {
-            //        AddReward(-0.05f);
-            //    }
-            //    else
-            //    {
-            //        AddReward(0.05f);
-            //    }
-            //    /*
-            //    //Getting further
-            //    if (distanceToTarget > (previousDistance + 0.1f))
-            //    {
-            //        //Debug.Log(distanceToTarget + " > " + (previousDistance + 0.1).ToString());
-            //        AddReward(0.1f);
-            //    }
-            //    previousDistance = distanceToTarget;*/
-            //}
         }
-        else
+
+        //Enemy in front of you, and you are shooting
+        if(IsEnemyInFront() && vectorAction[2] > 0)
         {
-            previousDistance = float.MinValue;
+            AddReward(0.05f);
         }
 
         Vector3 controlSignal = Vector3.zero;
         controlSignal.x = vectorAction[0];
         controlSignal.y = vectorAction[1];
 
-        transform.Translate(Vector3.right * controlSignal.x * (speed * 2) * Time.deltaTime);
-        transform.Translate(Vector3.up * controlSignal.y * (speed * 2) * Time.deltaTime);
+        transform.Translate(controlSignal * speed * Time.deltaTime);
 
         if(vectorAction[2] > 0)
         {
             player.GetComponent<Player>().Shoot();
         }
-
-        //rBody.AddForce(controlSignal * speed);
     }
 
     private bool CheckCollision(GameObject target)
@@ -164,6 +161,89 @@ public class SpaceShipAgent : Agent
         return obj1Collider.IsTouching(obj2.GetComponent<Collider2D>(), contactFiler);
     }
 
+    public void RemoveEnemyFromInterval(GameObject enemy) //this method is called when spaceship is destroyed
+    {
+        int enemyPostionInterval = (int)Math.Ceiling(enemy.transform.position.x);
+
+        if (enemyPostionInterval > leftSide && enemyPostionInterval < rightSide)
+        {
+            enemyPostionInterval = mappedCoords[enemyPostionInterval];
+            globalIntervalsInfo[enemyPostionInterval] = false;            
+        }
+    }
+
+    public void AddEnemyToInterval(GameObject enemy) //this method is called on spaceship spawn
+    {
+        int enemyPostionInterval = (int)Math.Ceiling(enemy.transform.position.x);
+
+        if (enemyPostionInterval > leftSide && enemyPostionInterval < rightSide)
+        {
+            enemyPostionInterval = mappedCoords[enemyPostionInterval];
+            globalIntervalsInfo[enemyPostionInterval] = true;
+        }
+    }
+
+    private void ScanEnemiesInIntervals(int targetInterval)
+    {
+        var EnemiesArr = GameObject.FindGameObjectsWithTag("Enemy");
+
+        foreach (var enemy in EnemiesArr)
+        {
+            int enemyPostionInterval = (int)Math.Ceiling(enemy.transform.position.x);
+            enemyPostionInterval = mappedCoords[enemyPostionInterval];
+
+            if (enemyPostionInterval == targetInterval)
+            {
+                globalIntervalsInfo[enemyPostionInterval] = true;
+            }
+        }
+    }
+
+    private void ScanEnemiesInIntervals()
+    {                                
+        var EnemiesArr = GameObject.FindGameObjectsWithTag("Enemy");
+
+        foreach(var enemy in EnemiesArr)
+        {
+            int enemyPostionInterval = (int)Math.Ceiling(enemy.transform.position.x);
+            
+            if (enemyPostionInterval > leftSide && enemyPostionInterval < rightSide)
+            {
+                enemyPostionInterval = mappedCoords[enemyPostionInterval];
+                globalIntervalsInfo[enemyPostionInterval] = true;
+            }
+        }
+    }
+
+    private void SetCoordsMap()
+    {
+        leftSide = -(mapSizeX / 2);
+        rightSide = mapSizeX / 2;
+        intervalArrSize = mapSizeX - iterationStep;
+        globalIntervalsInfo = new bool[intervalArrSize];
+        var currentCoord = leftSide;
+
+        int i = 0;
+        while(currentCoord <= rightSide)
+        {
+            mappedCoords.Add(currentCoord, i);
+            currentCoord += iterationStep;
+            i++;
+        }  
+    }
+
+    private bool IsEnemyInFront()
+    {
+        Vector2 rayStartPosition = new Vector2(transform.position.x, transform.position.y + GetComponent<Collider2D>().bounds.size.y);
+        RaycastHit2D hit = Physics2D.Raycast(rayStartPosition, Vector2.up);
+
+        if (hit.collider != null && hit.collider.gameObject.tag == "Enemy")
+        {
+            return true;
+        }
+        return false;
+    }
+
     private GameObject GetEnemy()
     {
         if (Target == null)
@@ -174,12 +254,12 @@ public class SpaceShipAgent : Agent
             {
                 return TargetsArr[0];
             }
-            else
-            {
-                //spawn one enemy
-                spawn_manager.SpawnEnemy();
-                return GameObject.FindGameObjectWithTag("Enemy");
-            }
+            //else
+            //{
+            //    //spawn one enemy
+            //    spawn_manager.SpawnEnemy();
+            //    return GameObject.FindGameObjectWithTag("Enemy");
+            //}
 
             return null;
         }

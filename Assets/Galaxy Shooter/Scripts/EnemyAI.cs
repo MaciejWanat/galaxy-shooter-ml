@@ -30,22 +30,19 @@ public class EnemyAI : MonoBehaviour {
 
         if(transform.position.y < -7)
         {
-            //Destroy(this.gameObject);
-            int inYourFace = Random.Range(0, 3);
+            Destroy(this.gameObject);
+            
+            //int inYourFace = Random.Range(0, 3);
 
-            if (inYourFace == 0)
-            {
-                transform.position = new Vector3(Player.transform.position.x, 7, 0);
-            }
-            else
-            {
-                transform.position =  new Vector3(Random.Range(-3.5f, 3.5f), 7, 0);
-            }
-
-             /*
-                float randomX = Random.Range(-7f, 7f);
-                transform.position = new Vector3(randomX, 7, 0);
-             */
+            //if (inYourFace == 0)
+            //{
+            //    transform.position = new Vector3(Player.transform.position.x, 7, 0);
+            //}
+            //else
+            //{
+            //    transform.position =  new Vector3(Random.Range(-3.5f, 3.5f), 7, 0);
+            //}
+            
         }
 	}
 
@@ -63,6 +60,7 @@ public class EnemyAI : MonoBehaviour {
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+        //Collisions are detected in Agent for machine learning purposes.
         /*
         if (other.tag == "Laser")
         {
@@ -78,7 +76,6 @@ public class EnemyAI : MonoBehaviour {
             Explode(enemyExplosionPrefab);            
         }
         */
-        //Enemy is destroyed when training fucntion decects collision with player
         /*
         else
         if (other.tag == "Player")

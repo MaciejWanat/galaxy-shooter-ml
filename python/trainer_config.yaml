@@ -23,7 +23,8 @@ default:
 
 SpaceShipBrain:   
     max_steps: 5.0e6
-    num_layers: 3
+    num_layers: 4
+    hidden_units: 256
     
 BananaBrain:
     normalize: false

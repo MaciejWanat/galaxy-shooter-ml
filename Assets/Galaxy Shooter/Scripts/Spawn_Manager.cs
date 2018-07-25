@@ -20,6 +20,7 @@ public class Spawn_Manager : MonoBehaviour {
     private int Difficulty = 0;
 
     private GameObject Player;
+    private SpaceShipAgent spaceShipAgent;
     
     // Use this for initialization
     void Start()
@@ -28,6 +29,7 @@ public class Spawn_Manager : MonoBehaviour {
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
 
         Player = GameObject.FindGameObjectWithTag("Player");
+        spaceShipAgent = Player.GetComponent<SpaceShipAgent>();
         //override
         gameManager.gameOver = false;
 
@@ -36,15 +38,16 @@ public class Spawn_Manager : MonoBehaviour {
 
     public void StartSpawnRoutines()
     {
-        //StartCoroutine(EnemySpawnRoutine());
+        StartCoroutine(EnemySpawnRoutine());
         //StartCoroutine(PowerUpSpawnRoutine()); 
-        //StartCoroutine(SpiceUpTheTempoRoutine());
+        StartCoroutine(SpiceUpTheTempoRoutine());
     }
 
     public void SpawnEnemy()
     {
         //spawn one enemy
-        Instantiate(enemyShipPrefab, new Vector3(Random.Range(-3.5f, 3.5f), 7, 0), Quaternion.identity);
+        var enemy = Instantiate(enemyShipPrefab, new Vector3(Random.Range(-3.5f, 3.5f), 7, 0), Quaternion.identity);
+        spaceShipAgent.AddEnemyToInterval(enemy);
     }
 
     IEnumerator EnemySpawnRoutine()
@@ -56,12 +59,15 @@ public class Spawn_Manager : MonoBehaviour {
 
             if(inYourFace == 0)
             {
-                Instantiate(enemyShipPrefab, new Vector3(Player.transform.position.x, 7, 0), Quaternion.identity);
+                var enemy = Instantiate(enemyShipPrefab, new Vector3(Player.transform.position.x, 7, 0), Quaternion.identity);
+                spaceShipAgent.AddEnemyToInterval(enemy);
             }
             else
             {
-                Instantiate(enemyShipPrefab, new Vector3(Random.Range(-3.5f, 3.5f), 7, 0), Quaternion.identity);
+                var enemy = Instantiate(enemyShipPrefab, new Vector3(Random.Range(-3.5f, 3.5f), 7, 0), Quaternion.identity);
+                spaceShipAgent.AddEnemyToInterval(enemy);
             }
+            
             yield return new WaitForSeconds(EnemySpawnInterval);
         }
     }
@@ -100,6 +106,7 @@ public class Spawn_Manager : MonoBehaviour {
     {
         EnemySpawnInterval = 5.0f;
         Difficulty = 0;
+        uiManager.UpdateDifficulty(Difficulty);
     }
 }
 

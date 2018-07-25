@@ -167,7 +167,7 @@ Prefab:
     - target: {fileID: 114088896644062758, guid: 60037dfe2173e27448d8c91b32c4276c,
         type: 2}
       propertyPath: fireRate
-      value: 0.7
+      value: 0.6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 60037dfe2173e27448d8c91b32c4276c, type: 2}
@@ -197,6 +197,8 @@ MonoBehaviour:
     numberOfActionsBetweenDecisions: 1
   Target: {fileID: 0}
   speed: 5
+  mapSizeX: 14
+  iterationStep: 1
 --- !u!1 &167770854
 GameObject:
   m_ObjectHideFlags: 0
@@ -862,7 +864,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   brainParameters:
-    vectorObservationSize: 10
+    vectorObservationSize: 17
     numStackedVectorObservations: 1
     vectorActionSize: 3
     cameraResolutions: []
