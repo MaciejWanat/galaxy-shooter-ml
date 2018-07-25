@@ -100,7 +100,7 @@ public class SpaceShipAgent : Agent
             {          
                 if (CheckCollision(laser, enemy))
                 {
-                    AddReward(5.0f + uiManager.score);
+                    AddReward(10.0f + uiManager.score);
                     uiManager.UpdateScore();
                     enemy.GetComponent<EnemyAI>().PlayExplode();                    
                     Destroy(enemy);
@@ -121,11 +121,11 @@ public class SpaceShipAgent : Agent
         {
             AddReward(0.05f);
         }
-
-        //Enemy insn't front of you, and you are shooting
+        else
+        //Enemy isn't in front of you, and you are shooting
         if (!IsEnemyInFront() && vectorAction[2] > 0)
         {
-            AddReward(-0.05f);
+            AddReward(-0.04f);
         }
 
         Vector3 controlSignal = Vector3.zero;
