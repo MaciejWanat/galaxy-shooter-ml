@@ -47,7 +47,7 @@ public class Spawn_Manager : MonoBehaviour {
     {
         //spawn one enemy
         var enemy = Instantiate(enemyShipPrefab, new Vector3(Random.Range(-3.5f, 3.5f), 7, 0), Quaternion.identity);
-        spaceShipAgent.AddEnemyToInterval(enemy);
+        //spaceShipAgent.AddEnemyToInterval(enemy);
     }
 
     IEnumerator EnemySpawnRoutine()
@@ -60,12 +60,12 @@ public class Spawn_Manager : MonoBehaviour {
             if(inYourFace == 0)
             {
                 var enemy = Instantiate(enemyShipPrefab, new Vector3(Player.transform.position.x, 7, 0), Quaternion.identity);
-                spaceShipAgent.AddEnemyToInterval(enemy);
+                //spaceShipAgent.AddEnemyToInterval(enemy);
             }
             else
             {
                 var enemy = Instantiate(enemyShipPrefab, new Vector3(Random.Range(-3.5f, 3.5f), 7, 0), Quaternion.identity);
-                spaceShipAgent.AddEnemyToInterval(enemy);
+                //spaceShipAgent.AddEnemyToInterval(enemy);
             }
             
             yield return new WaitForSeconds(EnemySpawnInterval);

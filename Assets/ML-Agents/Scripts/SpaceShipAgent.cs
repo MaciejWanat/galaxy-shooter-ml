@@ -18,12 +18,18 @@ public class SpaceShipAgent : Agent
     [SerializeField]
     private int mapSizeX = 14;
     [SerializeField]
+    private int mapSizeY = 10;
+    [SerializeField]
     private int iterationStep = 1;
     private int leftSide;
     private int rightSide;
-    private Dictionary<int, int> mappedCoords = new Dictionary<int, int>();
-    private int intervalArrSize; // mapSizeX - iterationStep
-    private bool[] globalIntervalsInfo;
+    private int upSide;
+    private int downSide;
+    private Dictionary<int, int> mappedCoordsX = new Dictionary<int, int>();
+    private Dictionary<int, int> mappedCoordsY = new Dictionary<int, int>();
+    private int intervalArrSizeX; // mapSizeX - iterationStep
+    private int intervalArrSizeY; // mapSizeY - iterationStep
+    private bool[,] globalIntervalsInfo;
 
     private void Start()
     {
@@ -36,7 +42,10 @@ public class SpaceShipAgent : Agent
 
     public override void CollectObservations()
     {
-        foreach(var interval in globalIntervalsInfo)
+        globalIntervalsInfo = new bool[intervalArrSizeX, intervalArrSizeY];
+        ScanEnemiesInIntervals();
+
+        foreach (var interval in globalIntervalsInfo)
         {
             AddVectorObs(interval);
         }
@@ -68,7 +77,7 @@ public class SpaceShipAgent : Agent
     public override void AgentReset()
     {
         //reset interval info
-        globalIntervalsInfo = new bool[intervalArrSize];
+        globalIntervalsInfo = new bool[intervalArrSizeX, intervalArrSizeY];
 
         //destroy enemies
         Target = GetEnemy();
@@ -108,12 +117,13 @@ public class SpaceShipAgent : Agent
                     uiManager.UpdateScore();
 
                     RemoveEnemyFromInterval(enemy); // deleting enemy from interval
-                    int enemyPostionInterval = (int)Math.Ceiling(enemy.transform.position.x);
+                    int enemyPostionIntervalX = (int)Math.Ceiling(enemy.transform.position.x);
+                    int enemyPostionIntervalY = (int)Math.Ceiling(enemy.transform.position.y);
 
                     enemy.GetComponent<EnemyAI>().PlayExplode();                    
                     Destroy(enemy);
 
-                    ScanEnemiesInIntervals(enemyPostionInterval); //checking if any another enemy is in the interval
+                    ScanEnemiesInIntervals(enemyPostionIntervalX, enemyPostionIntervalY); //checking if any another enemy is in the interval
 
                     Destroy(laser);
                 }
@@ -163,38 +173,51 @@ public class SpaceShipAgent : Agent
 
     public void RemoveEnemyFromInterval(GameObject enemy) //this method is called when spaceship is destroyed
     {
-        int enemyPostionInterval = (int)Math.Ceiling(enemy.transform.position.x);
+        int enemyPostionIntervalX = (int)Math.Ceiling(enemy.transform.position.x);
+        int enemyPostionIntervalY = (int)Math.Ceiling(enemy.transform.position.y);
 
-        if (enemyPostionInterval > leftSide && enemyPostionInterval < rightSide)
+        if (enemyPostionIntervalX > leftSide && enemyPostionIntervalX < rightSide) // X
         {
-            enemyPostionInterval = mappedCoords[enemyPostionInterval];
-            globalIntervalsInfo[enemyPostionInterval] = false;            
+            if (enemyPostionIntervalY > downSide && enemyPostionIntervalY < upSide) // Y
+            {
+                enemyPostionIntervalX = mappedCoordsX[enemyPostionIntervalX];
+                enemyPostionIntervalY = mappedCoordsY[enemyPostionIntervalY];
+                globalIntervalsInfo[enemyPostionIntervalX, enemyPostionIntervalY] = false;
+            }
         }
     }
 
     public void AddEnemyToInterval(GameObject enemy) //this method is called on spaceship spawn
-    {
-        int enemyPostionInterval = (int)Math.Ceiling(enemy.transform.position.x);
+    {        
+        int enemyPostionIntervalX = (int)Math.Ceiling(enemy.transform.position.x);
+        int enemyPostionIntervalY = (int)Math.Ceiling(enemy.transform.position.y);
 
-        if (enemyPostionInterval > leftSide && enemyPostionInterval < rightSide)
+        if (enemyPostionIntervalX > leftSide && enemyPostionIntervalX < rightSide) // X
         {
-            enemyPostionInterval = mappedCoords[enemyPostionInterval];
-            globalIntervalsInfo[enemyPostionInterval] = true;
+            if (enemyPostionIntervalY > downSide && enemyPostionIntervalY < upSide) // Y
+            {
+                enemyPostionIntervalX = mappedCoordsX[enemyPostionIntervalX];
+                enemyPostionIntervalY = mappedCoordsY[enemyPostionIntervalY];
+                globalIntervalsInfo[enemyPostionIntervalX, enemyPostionIntervalY] = true;
+            }
         }
     }
 
-    private void ScanEnemiesInIntervals(int targetInterval)
+    private void ScanEnemiesInIntervals(int targetIntervalX, int targetIntervalY)
     {
         var EnemiesArr = GameObject.FindGameObjectsWithTag("Enemy");
 
         foreach (var enemy in EnemiesArr)
         {
-            int enemyPostionInterval = (int)Math.Ceiling(enemy.transform.position.x);
-            enemyPostionInterval = mappedCoords[enemyPostionInterval];
+            int enemyPostionIntervalX = (int)Math.Ceiling(enemy.transform.position.x);
+            int enemyPostionIntervalY = (int)Math.Ceiling(enemy.transform.position.y);
+            enemyPostionIntervalY = mappedCoordsY[enemyPostionIntervalY];
+            enemyPostionIntervalX = mappedCoordsX[enemyPostionIntervalX];
 
-            if (enemyPostionInterval == targetInterval)
+            if (enemyPostionIntervalX == targetIntervalX && enemyPostionIntervalY == targetIntervalY)
             {
-                globalIntervalsInfo[enemyPostionInterval] = true;
+                globalIntervalsInfo[enemyPostionIntervalX, enemyPostionIntervalY] = true;
+                break;
             }
         }
     }
@@ -205,13 +228,7 @@ public class SpaceShipAgent : Agent
 
         foreach(var enemy in EnemiesArr)
         {
-            int enemyPostionInterval = (int)Math.Ceiling(enemy.transform.position.x);
-            
-            if (enemyPostionInterval > leftSide && enemyPostionInterval < rightSide)
-            {
-                enemyPostionInterval = mappedCoords[enemyPostionInterval];
-                globalIntervalsInfo[enemyPostionInterval] = true;
-            }
+            AddEnemyToInterval(enemy);
         }
     }
 
@@ -219,17 +236,30 @@ public class SpaceShipAgent : Agent
     {
         leftSide = -(mapSizeX / 2);
         rightSide = mapSizeX / 2;
-        intervalArrSize = mapSizeX - iterationStep;
-        globalIntervalsInfo = new bool[intervalArrSize];
+        upSide = mapSizeY / 2;
+        downSide = -(mapSizeY / 2);
+        intervalArrSizeX = mapSizeX - iterationStep;
+        intervalArrSizeY = mapSizeY - iterationStep;
+        globalIntervalsInfo = new bool[intervalArrSizeX, intervalArrSizeY];
         var currentCoord = leftSide;
 
         int i = 0;
         while(currentCoord <= rightSide)
         {
-            mappedCoords.Add(currentCoord, i);
+            mappedCoordsX.Add(currentCoord, i);
             currentCoord += iterationStep;
             i++;
-        }  
+        }
+
+        currentCoord = downSide;
+
+        i = intervalArrSizeY;
+        while (currentCoord <= upSide)
+        {
+            mappedCoordsY.Add(currentCoord, i);
+            currentCoord += iterationStep;
+            i--;
+        }
     }
 
     private bool IsEnemyInFront()
