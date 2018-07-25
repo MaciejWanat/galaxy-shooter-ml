@@ -122,6 +122,12 @@ public class SpaceShipAgent : Agent
             AddReward(0.05f);
         }
 
+        //Enemy insn't front of you, and you are shooting
+        if (!IsEnemyInFront() && vectorAction[2] > 0)
+        {
+            AddReward(-0.05f);
+        }
+
         Vector3 controlSignal = Vector3.zero;
         controlSignal.x = vectorAction[0];
         controlSignal.y = vectorAction[1];
