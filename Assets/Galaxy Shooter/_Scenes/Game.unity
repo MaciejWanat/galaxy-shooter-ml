@@ -296,7 +296,7 @@ MonoBehaviour:
     width: 80
     height: 80
     qualityLevel: 1
-    timeScale: 25.9
+    timeScale: 30
     targetFrameRate: -1
   inferenceConfiguration:
     width: 1280
@@ -920,7 +920,7 @@ MonoBehaviour:
     - 
     vectorActionSpaceType: 1
     vectorObservationSpaceType: 1
-  brainType: 2
+  brainType: 0
   CoreBrains:
   - {fileID: 958381781}
   - {fileID: 481637962}

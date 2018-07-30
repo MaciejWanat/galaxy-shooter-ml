@@ -21,10 +21,8 @@ public class SpaceShipAgent : Agent
     private int mapSizeY = 10;
     [SerializeField]
     private int iterationStep = 1;
-    [SerializeField]
-    private int enemyColliderXSize = 2;
-    [SerializeField]
-    private int playerColliderXSize = 1;
+    private float enemyColliderXSize = 2;
+    private float playerColliderXSize = 1;
     private int leftSide;
     private int rightSide;
     private int upSide;
@@ -42,6 +40,7 @@ public class SpaceShipAgent : Agent
         spawn_manager = GameObject.Find("Spawn_Manager").GetComponent<Spawn_Manager>();
         uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
         player = GameObject.FindGameObjectWithTag("Player");
+        playerColliderXSize = player.GetComponent<Collider2D>().bounds.size.x;
     }
 
     public override void CollectObservations()
@@ -57,6 +56,8 @@ public class SpaceShipAgent : Agent
         AddVectorObs(IsEnemyInFront());
         AddVectorObs(IsEnemyInLeft());
         AddVectorObs(IsEnemyInRight());
+        AddVectorObs(GoingToCollide());
+
         AddVectorObs(gameObject.transform.position.x);
         AddVectorObs(gameObject.transform.position.y);
 
@@ -108,7 +109,7 @@ public class SpaceShipAgent : Agent
             {          
                 if (CheckCollision(laser, enemy))
                 {
-                    AddReward(15.0f);
+                    AddReward(5.0f);
                     uiManager.UpdateScore();
                     enemy.GetComponent<EnemyAI>().PlayExplode();                    
                     Destroy(enemy);
@@ -183,8 +184,10 @@ public class SpaceShipAgent : Agent
 
     public void ModifyEnemyInInterval(GameObject enemy, bool add) //this method adds or removes enemy in intervals its present. add = true -> add | add = false -> delete.
     {
-        int enemyPostionIntervalXLeft = (int)Math.Ceiling(enemy.transform.position.x - (enemyColliderXSize / 2.0f));
-        int enemyPostionIntervalXRight = (int)Math.Ceiling(enemy.transform.position.x + (enemyColliderXSize / 2.0f));
+        enemyColliderXSize = enemy.GetComponent<Collider2D>().bounds.size.x;
+        int enemyPostionIntervalXLeft = (int)Math.Ceiling(enemy.transform.position.x - (enemyColliderXSize / 2.0f) + 0.01); //0.01 is a little bias for situations when colliders are int
+        int enemyPostionIntervalXCenter = (int)Math.Ceiling(enemy.transform.position.x);
+        int enemyPostionIntervalXRight = (int)Math.Ceiling(enemy.transform.position.x + (enemyColliderXSize / 2.0f) - 0.01);
 
         int enemyPostionIntervalY = (int)Math.Ceiling(enemy.transform.position.y);
         
@@ -196,6 +199,12 @@ public class SpaceShipAgent : Agent
             {
                 enemyPostionIntervalXLeft = mappedCoordsX[enemyPostionIntervalXLeft];
                 globalIntervalsInfo[enemyPostionIntervalXLeft, enemyPostionIntervalY] = add;
+            }
+
+            if (enemyPostionIntervalXCenter > leftSide && enemyPostionIntervalXCenter < rightSide) // X - center
+            {
+                enemyPostionIntervalXCenter = mappedCoordsX[enemyPostionIntervalXCenter];
+                globalIntervalsInfo[enemyPostionIntervalXCenter, enemyPostionIntervalY] = add;
             }
 
             if (enemyPostionIntervalXRight > leftSide && enemyPostionIntervalXRight < rightSide) // X - right
@@ -296,6 +305,15 @@ public class SpaceShipAgent : Agent
         RaycastHit2D hit = Physics2D.Raycast(rayStartPosition, Vector2.up);
 
         if (hit.collider != null && hit.collider.gameObject.tag == "Enemy")
+        {
+            return true;
+        }
+        return false;
+    }
+
+    private bool GoingToCollide()
+    {
+        if(IsEnemyInRight() || IsEnemyInLeft() || IsEnemyInFront())
         {
             return true;
         }

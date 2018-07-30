@@ -54,20 +54,21 @@ public class Spawn_Manager : MonoBehaviour {
     {
         while (gameManager.gameOver == false)
         {
+            /*
             //Spawn enemy at players face from time to time - to teach ML to avoid it
-            int inYourFace = Random.Range(0, 3);
+            //int inYourFace = Random.Range(0, 3);
 
             if(inYourFace == 0)
             {
                 var enemy = Instantiate(enemyShipPrefab, new Vector3(Player.transform.position.x, 7, 0), Quaternion.identity);
-                //spaceShipAgent.AddEnemyToInterval(enemy);
             }
             else
             {
                 var enemy = Instantiate(enemyShipPrefab, new Vector3(Random.Range(-3.5f, 3.5f), 7, 0), Quaternion.identity);
-                //spaceShipAgent.AddEnemyToInterval(enemy);
             }
-            
+            */
+            var enemy = Instantiate(enemyShipPrefab, new Vector3(Random.Range(-3.5f, 3.5f), 7, 0), Quaternion.identity);
+
             yield return new WaitForSeconds(EnemySpawnInterval);
         }
     }
