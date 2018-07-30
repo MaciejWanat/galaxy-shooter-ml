@@ -126,7 +126,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4785774200031750, guid: 60037dfe2173e27448d8c91b32c4276c, type: 2}
       propertyPath: m_LocalPosition.y
-      value: -1.22
+      value: -1.58
       objectReference: {fileID: 0}
     - target: {fileID: 4785774200031750, guid: 60037dfe2173e27448d8c91b32c4276c, type: 2}
       propertyPath: m_LocalPosition.z
@@ -193,8 +193,6 @@ MonoBehaviour:
   mapSizeX: 14
   mapSizeY: 10
   iterationStep: 1
-  enemyColliderXSize: 2
-  playerColliderXSize: 1
 --- !u!1 &167770854
 GameObject:
   m_ObjectHideFlags: 0
@@ -910,7 +908,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   brainParameters:
-    vectorObservationSize: 147
+    vectorObservationSize: 148
     numStackedVectorObservations: 1
     vectorActionSize: 3
     cameraResolutions: []
@@ -920,7 +918,7 @@ MonoBehaviour:
     - 
     vectorActionSpaceType: 1
     vectorObservationSpaceType: 1
-  brainType: 0
+  brainType: 2
   CoreBrains:
   - {fileID: 958381781}
   - {fileID: 481637962}
