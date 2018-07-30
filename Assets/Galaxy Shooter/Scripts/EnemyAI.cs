@@ -15,6 +15,7 @@ public class EnemyAI : MonoBehaviour {
     private AudioClip clip;
     public bool collideWithPlayer = false;
     private GameObject Player;
+    public bool passedPlayer { get; set; } = false;
 
     // Use this for initialization
     void Start ()

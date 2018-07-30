@@ -122,11 +122,11 @@ Prefab:
     m_Modifications:
     - target: {fileID: 4785774200031750, guid: 60037dfe2173e27448d8c91b32c4276c, type: 2}
       propertyPath: m_LocalPosition.x
-      value: -0.03
+      value: -0.02
       objectReference: {fileID: 0}
     - target: {fileID: 4785774200031750, guid: 60037dfe2173e27448d8c91b32c4276c, type: 2}
       propertyPath: m_LocalPosition.y
-      value: -1.77
+      value: -1.22
       objectReference: {fileID: 0}
     - target: {fileID: 4785774200031750, guid: 60037dfe2173e27448d8c91b32c4276c, type: 2}
       propertyPath: m_LocalPosition.z
@@ -156,6 +156,11 @@ Prefab:
         type: 2}
       propertyPath: fireRate
       value: 0.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 61125350075078584, guid: 60037dfe2173e27448d8c91b32c4276c,
+        type: 2}
+      propertyPath: m_Size.x
+      value: 2.88
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 60037dfe2173e27448d8c91b32c4276c, type: 2}
@@ -188,6 +193,8 @@ MonoBehaviour:
   mapSizeX: 14
   mapSizeY: 10
   iterationStep: 1
+  enemyColliderXSize: 2
+  playerColliderXSize: 1
 --- !u!1 &167770854
 GameObject:
   m_ObjectHideFlags: 0
@@ -204,7 +211,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &167770855
 RectTransform:
   m_ObjectHideFlags: 0
@@ -903,7 +910,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   brainParameters:
-    vectorObservationSize: 121
+    vectorObservationSize: 146
     numStackedVectorObservations: 1
     vectorActionSize: 3
     cameraResolutions: []
@@ -913,7 +920,7 @@ MonoBehaviour:
     - 
     vectorActionSpaceType: 1
     vectorObservationSpaceType: 1
-  brainType: 3
+  brainType: 0
   CoreBrains:
   - {fileID: 958381781}
   - {fileID: 481637962}
@@ -1149,8 +1156,8 @@ MonoBehaviour:
     type: 2}
   powerUps:
   - {fileID: 1171293247069478, guid: 5489129b28ceb724da8f9937b452215d, type: 2}
-  - {fileID: 1277582078813232, guid: 0f2f5a16b97fbe043a1bd1ab2d8cfb1e, type: 2}
   - {fileID: 1801930796163484, guid: 956c94c93b4f31743920fb07ff9ff2a7, type: 2}
+  - {fileID: 1277582078813232, guid: 0f2f5a16b97fbe043a1bd1ab2d8cfb1e, type: 2}
   DifficultyUpInterval: 5
   DifficultyRaiseTempo: 1
 --- !u!4 &1722448448

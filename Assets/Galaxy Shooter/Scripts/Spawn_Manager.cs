@@ -76,7 +76,8 @@ public class Spawn_Manager : MonoBehaviour {
     {
         while(gameManager.gameOver == false)
         {
-            int randomPowerUp = Random.Range(0, 3);
+            //0 - 2 range -> disable speedup, because it messes hardly with the neural network input
+            int randomPowerUp = Random.Range(0, 2);
             Instantiate(powerUps[randomPowerUp], new Vector3(Random.Range(-3.5f, 3.5f), 7, 0), Quaternion.identity);
             int randomCooldown = Random.Range(0, 21);
             yield return new WaitForSeconds(randomCooldown);

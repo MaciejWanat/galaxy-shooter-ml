@@ -22,7 +22,9 @@ public class SpaceShipAgent : Agent
     [SerializeField]
     private int iterationStep = 1;
     [SerializeField]
-    private int enemyColliderSize = 2;
+    private int enemyColliderXSize = 2;
+    [SerializeField]
+    private int playerColliderXSize = 1;
     private int leftSide;
     private int rightSide;
     private int upSide;
@@ -53,6 +55,8 @@ public class SpaceShipAgent : Agent
         }
 
         AddVectorObs(IsEnemyInFront());
+        AddVectorObs(IsEnemyInLeft());
+        AddVectorObs(IsEnemyInRight());
         AddVectorObs(gameObject.transform.position.x);
         AddVectorObs(gameObject.transform.position.y);
 
@@ -102,7 +106,7 @@ public class SpaceShipAgent : Agent
             {          
                 if (CheckCollision(laser, enemy))
                 {
-                    AddReward(15.0f);
+                    AddReward(5.0f);
                     uiManager.UpdateScore();
                     enemy.GetComponent<EnemyAI>().PlayExplode();                    
                     Destroy(enemy);
@@ -115,6 +119,13 @@ public class SpaceShipAgent : Agent
             {
                 AddReward(-10.0f);
                 Done();
+            }
+
+            //You've let enemy to pass
+            if (!enemy.GetComponent<EnemyAI>().passedPlayer  && -6.5f < enemy.transform.position.y )
+            {
+                AddReward(-5.0f);
+                enemy.GetComponent<EnemyAI>().passedPlayer = true;
             }
         }
 
@@ -170,8 +181,8 @@ public class SpaceShipAgent : Agent
 
     public void ModifyEnemyInInterval(GameObject enemy, bool add) //this method adds or removes enemy in intervals its present. add = true -> add | add = false -> delete.
     {
-        int enemyPostionIntervalXLeft = (int)Math.Ceiling(enemy.transform.position.x) - (enemyColliderSize / 2);
-        int enemyPostionIntervalXRight = (int)Math.Ceiling(enemy.transform.position.x) + (enemyColliderSize / 2);
+        int enemyPostionIntervalXLeft = (int)Math.Ceiling(enemy.transform.position.x) - (enemyColliderXSize / 2);
+        int enemyPostionIntervalXRight = (int)Math.Ceiling(enemy.transform.position.x) + (enemyColliderXSize / 2);
 
         int enemyPostionIntervalY = (int)Math.Ceiling(enemy.transform.position.y);
         
@@ -256,6 +267,30 @@ public class SpaceShipAgent : Agent
     private bool IsEnemyInFront()
     {
         Vector2 rayStartPosition = new Vector2(transform.position.x, transform.position.y + GetComponent<Collider2D>().bounds.size.y);
+        RaycastHit2D hit = Physics2D.Raycast(rayStartPosition, Vector2.up);
+
+        if (hit.collider != null && hit.collider.gameObject.tag == "Enemy")
+        {
+            return true;
+        }
+        return false;
+    }
+
+    private bool IsEnemyInLeft()
+    {
+        Vector2 rayStartPosition = new Vector2(transform.position.x - (playerColliderXSize / 2.0f), transform.position.y + GetComponent<Collider2D>().bounds.size.y);
+        RaycastHit2D hit = Physics2D.Raycast(rayStartPosition, Vector2.up);
+
+        if (hit.collider != null && hit.collider.gameObject.tag == "Enemy")
+        {
+            return true;
+        }
+        return false;
+    }
+
+    private bool IsEnemyInRight()
+    {
+        Vector2 rayStartPosition = new Vector2(transform.position.x + (playerColliderXSize / 2.0f), transform.position.y + GetComponent<Collider2D>().bounds.size.y);
         RaycastHit2D hit = Physics2D.Raycast(rayStartPosition, Vector2.up);
 
         if (hit.collider != null && hit.collider.gameObject.tag == "Enemy")

@@ -7,5 +7,6 @@ If you are interested in older version with different goals, look throught past 
 - e5452ff - avoiding collisions with enemy (respawned enemy)
 - 187dd1e - avoiding collisions with enemy (relocated enemy)
 - 2545307 - shooting enemies approaching
+- dd5a624 - multiple enemies. Enemy represented as a point in 2D grid.
 
 For more informations about machine learning in Unity, check out [Unity ML-Agents Toolkit](https://github.com/Unity-Technologies/ml-agents) which this project is based on.
