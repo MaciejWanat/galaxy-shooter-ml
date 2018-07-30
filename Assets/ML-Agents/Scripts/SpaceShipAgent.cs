@@ -21,6 +21,8 @@ public class SpaceShipAgent : Agent
     private int mapSizeY = 10;
     [SerializeField]
     private int iterationStep = 1;
+    [SerializeField]
+    private int enemyColliderSize = 2;
     private int leftSide;
     private int rightSide;
     private int upSide;
@@ -158,54 +160,58 @@ public class SpaceShipAgent : Agent
 
     public void RemoveEnemyFromInterval(GameObject enemy) //this method is called when spaceship is destroyed
     {
-        int enemyPostionIntervalX = (int)Math.Ceiling(enemy.transform.position.x);
-        int enemyPostionIntervalY = (int)Math.Ceiling(enemy.transform.position.y);
-
-        if (enemyPostionIntervalX > leftSide && enemyPostionIntervalX < rightSide) // X
-        {
-            if (enemyPostionIntervalY > downSide && enemyPostionIntervalY < upSide) // Y
-            {
-                enemyPostionIntervalX = mappedCoordsX[enemyPostionIntervalX];
-                enemyPostionIntervalY = mappedCoordsY[enemyPostionIntervalY];
-                globalIntervalsInfo[enemyPostionIntervalX, enemyPostionIntervalY] = false;
-            }
-        }
+        ModifyEnemyInInterval(enemy, false);
     }
 
     public void AddEnemyToInterval(GameObject enemy) //this method is called on spaceship spawn
-    {        
-        int enemyPostionIntervalX = (int)Math.Ceiling(enemy.transform.position.x);
-        int enemyPostionIntervalY = (int)Math.Ceiling(enemy.transform.position.y);
-
-        if (enemyPostionIntervalX > leftSide && enemyPostionIntervalX < rightSide) // X
-        {
-            if (enemyPostionIntervalY > downSide && enemyPostionIntervalY < upSide) // Y
-            {
-                enemyPostionIntervalX = mappedCoordsX[enemyPostionIntervalX];
-                enemyPostionIntervalY = mappedCoordsY[enemyPostionIntervalY];
-                globalIntervalsInfo[enemyPostionIntervalX, enemyPostionIntervalY] = true;
-            }
-        }
-    }
-
-    private void ScanEnemiesInIntervals(int targetIntervalX, int targetIntervalY)
     {
-        var EnemiesArr = GameObject.FindGameObjectsWithTag("Enemy");
+        ModifyEnemyInInterval(enemy, true);
+    }
 
-        foreach (var enemy in EnemiesArr)
+    public void ModifyEnemyInInterval(GameObject enemy, bool add) //this method adds or removes enemy in intervals its present. add = true -> add | add = false -> delete.
+    {
+        int enemyPostionIntervalXLeft = (int)Math.Ceiling(enemy.transform.position.x) - (enemyColliderSize / 2);
+        int enemyPostionIntervalXRight = (int)Math.Ceiling(enemy.transform.position.x) + (enemyColliderSize / 2);
+
+        int enemyPostionIntervalY = (int)Math.Ceiling(enemy.transform.position.y);
+        
+        if (enemyPostionIntervalY > downSide && enemyPostionIntervalY < upSide) // Y
         {
-            int enemyPostionIntervalX = (int)Math.Ceiling(enemy.transform.position.x);
-            int enemyPostionIntervalY = (int)Math.Ceiling(enemy.transform.position.y);
             enemyPostionIntervalY = mappedCoordsY[enemyPostionIntervalY];
-            enemyPostionIntervalX = mappedCoordsX[enemyPostionIntervalX];
 
-            if (enemyPostionIntervalX == targetIntervalX && enemyPostionIntervalY == targetIntervalY)
+            if (enemyPostionIntervalXLeft > leftSide && enemyPostionIntervalXLeft < rightSide) // X - left
             {
-                globalIntervalsInfo[enemyPostionIntervalX, enemyPostionIntervalY] = true;
-                break;
+                enemyPostionIntervalXLeft = mappedCoordsX[enemyPostionIntervalXLeft];
+                globalIntervalsInfo[enemyPostionIntervalXLeft, enemyPostionIntervalY] = add;
+            }
+
+            if (enemyPostionIntervalXRight > leftSide && enemyPostionIntervalXRight < rightSide) // X - right
+            {
+                enemyPostionIntervalXRight = mappedCoordsX[enemyPostionIntervalXRight];
+                globalIntervalsInfo[enemyPostionIntervalXRight, enemyPostionIntervalY] = add;
             }
         }
     }
+
+    //works on a single point enemy
+    //private void ScanEnemiesInIntervals(int targetIntervalX, int targetIntervalY)
+    //{
+    //    var EnemiesArr = GameObject.FindGameObjectsWithTag("Enemy");
+
+    //    foreach (var enemy in EnemiesArr)
+    //    {
+    //        int enemyPostionIntervalX = (int)Math.Ceiling(enemy.transform.position.x);
+    //        int enemyPostionIntervalY = (int)Math.Ceiling(enemy.transform.position.y);
+    //        enemyPostionIntervalY = mappedCoordsY[enemyPostionIntervalY];
+    //        enemyPostionIntervalX = mappedCoordsX[enemyPostionIntervalX];
+
+    //        if (enemyPostionIntervalX == targetIntervalX && enemyPostionIntervalY == targetIntervalY)
+    //        {
+    //            globalIntervalsInfo[enemyPostionIntervalX, enemyPostionIntervalY] = true;
+    //            break;
+    //        }
+    //    }
+    //}
 
     private void ScanEnemiesInIntervals()
     {                                
@@ -223,8 +229,8 @@ public class SpaceShipAgent : Agent
         rightSide = mapSizeX / 2;
         upSide = mapSizeY / 2;
         downSide = -(mapSizeY / 2);
-        intervalArrSizeX = mapSizeX - iterationStep;
-        intervalArrSizeY = mapSizeY - iterationStep;
+        intervalArrSizeX = mapSizeX;
+        intervalArrSizeY = mapSizeY;
         globalIntervalsInfo = new bool[intervalArrSizeX, intervalArrSizeY];
         var currentCoord = leftSide;
 
