@@ -60,8 +60,10 @@ public class SpaceShipAgent : Agent
         AddVectorObs(gameObject.transform.position.x);
         AddVectorObs(gameObject.transform.position.y);
 
-        int playerPostionInterval = (int)Math.Ceiling(player.transform.position.x);
-        AddVectorObs(playerPostionInterval);
+        int playerPostionLeftInterval = (int)Math.Ceiling(player.transform.position.x - (playerColliderXSize / 2.0f));
+        int playerPostionRightInterval = (int)Math.Ceiling(player.transform.position.x + (playerColliderXSize / 2.0f));
+        AddVectorObs(playerPostionLeftInterval);
+        AddVectorObs(playerPostionRightInterval);
     }
 
     public override void AgentReset()
@@ -106,7 +108,7 @@ public class SpaceShipAgent : Agent
             {          
                 if (CheckCollision(laser, enemy))
                 {
-                    AddReward(5.0f);
+                    AddReward(15.0f);
                     uiManager.UpdateScore();
                     enemy.GetComponent<EnemyAI>().PlayExplode();                    
                     Destroy(enemy);
@@ -181,8 +183,8 @@ public class SpaceShipAgent : Agent
 
     public void ModifyEnemyInInterval(GameObject enemy, bool add) //this method adds or removes enemy in intervals its present. add = true -> add | add = false -> delete.
     {
-        int enemyPostionIntervalXLeft = (int)Math.Ceiling(enemy.transform.position.x) - (enemyColliderXSize / 2);
-        int enemyPostionIntervalXRight = (int)Math.Ceiling(enemy.transform.position.x) + (enemyColliderXSize / 2);
+        int enemyPostionIntervalXLeft = (int)Math.Ceiling(enemy.transform.position.x - (enemyColliderXSize / 2.0f));
+        int enemyPostionIntervalXRight = (int)Math.Ceiling(enemy.transform.position.x + (enemyColliderXSize / 2.0f));
 
         int enemyPostionIntervalY = (int)Math.Ceiling(enemy.transform.position.y);
         
