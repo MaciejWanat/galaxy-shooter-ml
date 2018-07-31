@@ -109,7 +109,7 @@ public class SpaceShipAgent : Agent
             {          
                 if (CheckCollision(laser, enemy))
                 {
-                    AddReward(5.0f);
+                    AddReward(15.0f);
                     uiManager.UpdateScore();
                     enemy.GetComponent<EnemyAI>().PlayExplode();                    
                     Destroy(enemy);

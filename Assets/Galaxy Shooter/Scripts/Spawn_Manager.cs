@@ -54,9 +54,8 @@ public class Spawn_Manager : MonoBehaviour {
     {
         while (gameManager.gameOver == false)
         {
-            /*
             //Spawn enemy at players face from time to time - to teach ML to avoid it
-            //int inYourFace = Random.Range(0, 3);
+            int inYourFace = Random.Range(0, 5);
 
             if(inYourFace == 0)
             {
@@ -66,8 +65,6 @@ public class Spawn_Manager : MonoBehaviour {
             {
                 var enemy = Instantiate(enemyShipPrefab, new Vector3(Random.Range(-3.5f, 3.5f), 7, 0), Quaternion.identity);
             }
-            */
-            var enemy = Instantiate(enemyShipPrefab, new Vector3(Random.Range(-3.5f, 3.5f), 7, 0), Quaternion.identity);
 
             yield return new WaitForSeconds(EnemySpawnInterval);
         }

@@ -22,7 +22,7 @@ default:
     curiosity_enc_size: 128
 
 SpaceShipBrain:   
-    max_steps: 5.0e7
+    max_steps: 5.0e8
     num_layers: 3
     
 BananaBrain:
