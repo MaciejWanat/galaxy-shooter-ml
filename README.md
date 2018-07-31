@@ -1,5 +1,8 @@
 # galaxy-shooter-ml
-This is galaxy shooter version that includes machine learning for the game. For the base game check out [the master branch](https://github.com/MaciejWanat/galaxy-shooter-ml/tree/master).
+This is galaxy shooter version that includes machine learning for the game. 
+
+- For the base game check out [the master branch](https://github.com/MaciejWanat/galaxy-shooter-ml/tree/master).
+- For version that includes machine learning on multiple enemies, check out [the machine-learning-multiships branch](https://github.com/MaciejWanat/galaxy-shooter-ml/tree/machine-learning-multiships).
 
 This is heavily modded version, adjusted for the machine learning purposes. It's based on neural networks. Currently goal realized by program is shooting the enemies approaching. Power-ups and raising difficulty are disabled.
 
