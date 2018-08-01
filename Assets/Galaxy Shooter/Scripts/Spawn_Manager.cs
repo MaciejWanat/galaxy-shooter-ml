@@ -17,7 +17,7 @@ public class Spawn_Manager : MonoBehaviour {
     [SerializeField]
     private float DifficultyRaiseTempo = 1.0f;
     private float EnemySpawnInterval = 6.0f;
-    private int Difficulty = 0;
+    public int Difficulty { get; set;  } = 0;
 
     private GameObject Player;
     private SpaceShipAgent spaceShipAgent;
@@ -55,16 +55,18 @@ public class Spawn_Manager : MonoBehaviour {
         while (gameManager.gameOver == false)
         {
             //Spawn enemy at players face from time to time - to teach ML to avoid it
-            int inYourFace = Random.Range(0, 5);
+            //int inYourFace = Random.Range(0, 5);
 
-            if(inYourFace == 0)
-            {
-                var enemy = Instantiate(enemyShipPrefab, new Vector3(Player.transform.position.x, 7, 0), Quaternion.identity);
-            }
-            else
-            {
-                var enemy = Instantiate(enemyShipPrefab, new Vector3(Random.Range(-3.5f, 3.5f), 7, 0), Quaternion.identity);
-            }
+            //if(inYourFace == 0)
+            //{
+            //    var enemy = Instantiate(enemyShipPrefab, new Vector3(Player.transform.position.x, 7, 0), Quaternion.identity);
+            //}
+            //else
+            //{
+            //    var enemy = Instantiate(enemyShipPrefab, new Vector3(Random.Range(-3.5f, 3.5f), 7, 0), Quaternion.identity);
+            //}
+
+            var enemy = Instantiate(enemyShipPrefab, new Vector3(Random.Range(-3.5f, 3.5f), 7, 0), Quaternion.identity);
 
             yield return new WaitForSeconds(EnemySpawnInterval);
         }

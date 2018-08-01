@@ -61,8 +61,8 @@ public class SpaceShipAgent : Agent
         AddVectorObs(gameObject.transform.position.x);
         AddVectorObs(gameObject.transform.position.y);
 
-        int playerPostionLeftInterval = (int)Math.Ceiling(player.transform.position.x - (playerColliderXSize / 2.0f));
-        int playerPostionRightInterval = (int)Math.Ceiling(player.transform.position.x + (playerColliderXSize / 2.0f));
+        int playerPostionLeftInterval = mappedCoordsX[(int)Math.Ceiling(player.transform.position.x - (playerColliderXSize / 2.0f))];
+        int playerPostionRightInterval = mappedCoordsX[(int)Math.Ceiling(player.transform.position.x + (playerColliderXSize / 2.0f))];
         AddVectorObs(playerPostionLeftInterval);
         AddVectorObs(playerPostionRightInterval);
     }
@@ -109,7 +109,7 @@ public class SpaceShipAgent : Agent
             {          
                 if (CheckCollision(laser, enemy))
                 {
-                    AddReward(15.0f);
+                    AddReward(5.0f * (uiManager.score + 1));
                     uiManager.UpdateScore();
                     enemy.GetComponent<EnemyAI>().PlayExplode();                    
                     Destroy(enemy);
@@ -125,17 +125,73 @@ public class SpaceShipAgent : Agent
             }
 
             //You've let enemy to pass
-            if (!enemy.GetComponent<EnemyAI>().passedPlayer  && -6.5f < enemy.transform.position.y )
+            if (!enemy.GetComponent<EnemyAI>().passedPlayer  && -6.5f > enemy.transform.position.y )
             {
-                AddReward(-5.0f);
+                AddReward(-2.0f * spawn_manager.Difficulty);
+                uiManager.ResetScore();
                 enemy.GetComponent<EnemyAI>().passedPlayer = true;
             }
+        }
+
+        int playerPostionLeftInterval = mappedCoordsX[(int)Math.Ceiling(player.transform.position.x - (playerColliderXSize / 2.0f))];
+        int playerPostionRightInterval = mappedCoordsX[(int)Math.Ceiling(player.transform.position.x + (playerColliderXSize / 2.0f))];
+        bool anyAllign = false;
+        bool anyEnemy = false;
+
+        var minDist = int.MaxValue;
+        var maxDist = int.MinValue;
+
+        for (int i = 0; i < intervalArrSizeY; i++)
+        {
+            for (int j = 0; j < intervalArrSizeX; j++)
+            {
+                if(!anyEnemy && globalIntervalsInfo[j, i])
+                {
+                    anyEnemy = true;
+                }
+
+                if (globalIntervalsInfo[j, i] && j < minDist)
+                {
+                    minDist = j;
+                }
+
+                if (globalIntervalsInfo[j, i] && j > minDist)
+                {
+                    maxDist = j;
+                }
+            }
+        }
+
+        var mostAwayEnemy = Math.Max(Math.Abs(playerPostionLeftInterval - minDist), Math.Abs(playerPostionLeftInterval - maxDist));
+
+        //You are alligned x with enemy
+        for (int i = 0; i < intervalArrSizeY; i++)
+        {
+            if(globalIntervalsInfo[playerPostionLeftInterval, i] || globalIntervalsInfo[playerPostionRightInterval, i])
+            {
+                AddReward(0.03f);
+                anyAllign = true;
+                break;
+            }
+        }
+
+        //You are not having any enemy in front of you. Further you are, bigger the penalty.
+        //Punish only if there is any enemy on the board.
+        if(!anyAllign && anyEnemy)
+        {
+            AddReward(-0.03f * mostAwayEnemy);
+        }
+
+        //You're at position to shoot
+        if (IsEnemyInFront())
+        {
+            AddReward(0.05f);
         }
 
         //Enemy in front of you, and you are shooting
         if(IsEnemyInFront() && vectorAction[2] > 0)
         {
-            AddReward(0.05f);
+            AddReward(0.1f);
         }
         else
         //Enemy isn't in front of you, and you are shooting
