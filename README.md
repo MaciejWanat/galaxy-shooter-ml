@@ -12,3 +12,4 @@ If you are interested in older version with different goals, look throught past 
 - 2545307 - shooting enemies approaching
 
 For more informations about machine learning in Unity, check out [Unity ML-Agents Toolkit](https://github.com/Unity-Technologies/ml-agents) which this project is based on.
+[![Youtube link](https://img.youtube.com/vi/G0G44yEHNNk/maxresdefault.jpg)](https://youtu.be/G0G44yEHNNk)
