@@ -12,5 +12,7 @@ If you are interested in older version with different goals, look through past c
 - 2545307 - shooting enemies approaching
 - dd5a624 - multiple enemies. Enemy represented as a point in 2D grid.
 - cc15f78 - multiple enemies. Extended data input.
+- d7a1281 - multiple enemies. More sophisticated cost function.
 
 For more informations about machine learning in Unity, check out [Unity ML-Agents Toolkit](https://github.com/Unity-Technologies/ml-agents) which this project is based on.
+[![Youtube link](https://img.youtube.com/vi/G0G44yEHNNk/maxresdefault.jpg)](https://youtu.be/G0G44yEHNNk)
