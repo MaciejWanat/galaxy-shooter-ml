@@ -7,3 +7,4 @@ It works as a baseline for machine learning, and it's a playable version.
 - For version that includes machine learning on multiple enemies, check out [the machine-learning-multiships branch](https://github.com/MaciejWanat/galaxy-shooter-ml/tree/machine-learning-multiships).
 
 Playable [here](https://s416196.students.wmi.amu.edu.pl/spaceShooter/index.html).
+[![Youtube link](https://img.youtube.com/vi/https://youtu.be/G0G44yEHNNk/1.jpg)](https://www.youtube.com/watch?v=https://youtu.be/G0G44yEHNNk)
